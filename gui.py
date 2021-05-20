@@ -1,57 +1,75 @@
-import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import PySimpleGUI as sg
-import matplotlib
+from matplotlib.figure import Figure
+from tkinter import ttk 
+import tkinter as tk
+import numpy as np
 import backward_euler
+import forward_euler
+import runge_kutta
+import heun
 
-fig = matplotlib.figure.Figure(figsize=(5, 4), dpi=100)
-t = np.arange(1, 2, .01)
-# fig.add_subplot(111).plot(ts, ys)
-# fig.add_subplot(111).plot(t, yexact)
-fig.clear()
-matplotlib.use("TkAgg")
+class Plotter(FigureCanvasTkAgg):
 
-def draw_figure(canvas, figure):
-    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
-    figure_canvas_agg.draw_idle()
-    #figure_canvas_agg.get_tk_widget().pack(side="top", fill="both", expand=1)
-    return figure_canvas_agg
+    def __init__(self, master):
 
-layout = [
-    [sg.Text("Diffusion")],
-    [sg.Canvas(key="-CANVAS-")],
-    [sg.Button("Backward Euler"), sg.Button("Forward Euler"), 
-     sg.Button("Runge-Kutta"), sg.Button("Heun")],
-]
+        self.figure = Figure(dpi=100)
+        super().__init__(self.figure, master=master)
+        self.axes = self.figure.add_subplot(111)
+        self.get_tk_widget().grid(column=0, row=0, sticky='nsew')
 
-# Create the form and show it without the plot
-window = sg.Window(
-    "Course Work",
-    layout,
-    location=(0, 0),
-    finalize=True,
-    element_justification="center",
-    font="Helvetica 18",
-)
+    def draw_lists(self, points):
 
-# Add the plot to the window
-#can = draw_figure(window["-CANVAS-"].TKCanvas, fig)
+        self.axes.clear()
+        # x_list = [x for x in range(0, 100)]
+        # x_list = np.arange(1, 2, .01)
+        # y_list = [x for x in x_list]
+        self.axes.plot(points[0], points[1], color='y')
+        self.axes.plot(points[2], points[3], color='b')
+        self.draw_idle()
 
-while True:
-    event, values = window.read()
-    if event == sg.WIN_CLOSED:
-        break
-    elif event == "Backward Euler":
-        points = backward_euler.BackwardEuler().execute()
-        fig.add_subplot(111).plot(points[0], points[1])
-        fig.add_subplot(111).plot(points[2], points[3])
-        draw_figure(window["-CANVAS-"].TKCanvas, fig)
-        print("xuy1")
-    elif event == "Forward Euler":
-        print("xuy2")
-    elif event == "Runge-Kutta":
-        print("xuy3")
-    elif event == "Heun":
-        print("xuy4")
+class MainApplication(ttk.Frame):
 
-window.close()
+    def __init__(self, master, *args, **kwargs):
+
+        super().__init__(master)
+        self.grid(column=0, row=0, sticky='nsew')
+
+        frame = ttk.Frame(self, borderwidth=8)
+        frame.grid(column=0, row=0, sticky='nsew')
+        frame.rowconfigure(0, weight=1)
+
+        notes = ttk.Notebook(frame)
+        notes.grid(column=0, row=0, sticky='nsew')
+        notes.rowconfigure(0, weight=1)
+
+        page = ttk.Frame(notes)
+        notes.add(page, text='Picture')
+
+
+        plot = Plotter(page)
+
+        input_frame = ttk.Frame(self)
+        input_frame.grid(column=1, row=0, sticky='nsew')
+
+        # this binding doesn't update the plot
+        button_BE = ttk.Button(input_frame, text='Backward Euler', 
+                            command=lambda: 
+                            plot.draw_lists(backward_euler.BackwardEuler().execute()))
+        button_FE = ttk.Button(input_frame, text='Forward Euler', 
+                            command=lambda: 
+                            plot.draw_lists(forward_euler.ForwardEuler().execute()))
+        button_RK = ttk.Button(input_frame, text='Runge Kutt', 
+                            command=lambda: 
+                            plot.draw_lists(runge_kutta.Runge_Kutt().execute()))
+        button_H = ttk.Button(input_frame, text='Heun', 
+                            command=lambda: 
+                            plot.draw_lists(heun.Heun().execute()))
+        button_BE.grid(column=0, row=5, columnspan=2, sticky='ew')
+        button_FE.grid(column=0, row=7, columnspan=2, sticky='ew')
+        button_RK.grid(column=0, row=9, columnspan=2, sticky='ew')
+        button_H.grid(column=0, row=11, columnspan=2, sticky='ew')
+
+
+# root = tk.Tk() 
+# MainApplication(root)
+# root.mainloop()
