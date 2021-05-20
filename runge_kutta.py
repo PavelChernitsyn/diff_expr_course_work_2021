@@ -6,7 +6,10 @@ class Runge_Kutt:
     def __init__(self, _h = 0.2, _x = np.array([1.0, 2.0]), _yinit = np.array([4.0])):
         self.h = _h
         self.x = _x
-        self.yinit = _yinit
+        self.yinit = np.array([4.0])
+
+    def __del__(self):
+        pass
 
     def feval(self, funcName, *args):
         return eval(funcName)(*args)

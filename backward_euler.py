@@ -5,7 +5,10 @@ class BackwardEuler:
     def __init__(self, _h = 0.2, _x = np.array([1.0, 2.0]), _yinit = np.array([4.0])):
         self.h = _h
         self.x = _x
-        self.yinit = _yinit
+        self.yinit = np.array([4.0])
+
+    def __del__(self):
+        pass
 
     def main_BE(self, yinit, x_range, h):
         m = len(yinit)
@@ -17,6 +20,7 @@ class BackwardEuler:
         xsol = np.empty(0)
         xsol = np.append(xsol, x)
 
+        global ysol
         ysol = np.empty(0)
         ysol = np.append(ysol, y)
 

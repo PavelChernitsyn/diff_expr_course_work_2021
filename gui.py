@@ -23,6 +23,10 @@ class Plotter(FigureCanvasTkAgg):
         # x_list = [x for x in range(0, 100)]
         # x_list = np.arange(1, 2, .01)
         # y_list = [x for x in x_list]
+        # print (points[0])
+        # print (points[1])
+        # print (points[2])
+        # print (points[3])
         self.axes.plot(points[0], points[1], color='y')
         self.axes.plot(points[2], points[3], color='b')
         self.draw_idle()
