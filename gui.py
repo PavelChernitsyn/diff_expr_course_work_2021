@@ -7,6 +7,7 @@ import backward_euler
 import forward_euler
 import runge_kutta
 import heun
+import adams_bashforth_moulton
 
 class Plotter(FigureCanvasTkAgg):
 
@@ -68,10 +69,15 @@ class MainApplication(ttk.Frame):
         button_H = ttk.Button(input_frame, text='Heun', 
                             command=lambda: 
                             plot.draw_lists(heun.Heun().execute()))
+        button_ADM = ttk.Button(input_frame, text='Adams-Bashforth-Moulton', 
+                            command=lambda: 
+                            plot.draw_lists(adams_bashforth_moulton.ABM().execute()))
+                            
         button_BE.grid(column=0, row=5, columnspan=2, sticky='ew')
         button_FE.grid(column=0, row=7, columnspan=2, sticky='ew')
         button_RK.grid(column=0, row=9, columnspan=2, sticky='ew')
         button_H.grid(column=0, row=11, columnspan=2, sticky='ew')
+        button_ADM.grid(column=0, row=13, columnspan=2, sticky='ew')
 
 
 # root = tk.Tk() 

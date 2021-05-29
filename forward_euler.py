@@ -1,6 +1,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import my_func as mf
 
 class ForwardEuler:
     def __init__(self, _h = 0.2, _x = np.array([1.0, 2.0]), _yinit = np.array([4.0])):
@@ -11,11 +12,11 @@ class ForwardEuler:
     def __del__(self):
         pass
 
-    def feval(self, funcName, *args):
-        return eval(funcName)(*args)
+    # def feval(self, funcName, *args):
+    #     return eval(funcName)(*args)
 
 
-    def main_FE(self, func, yinit, x_range, h):
+    def main_FE(self, yinit, x_range, h):
         m = len(yinit) # Number of ODEs
         n = int((x_range[-1] - x_range[0])/h) # Number of sub-intervals
         
@@ -29,7 +30,8 @@ class ForwardEuler:
         ysol = np.append(ysol, y) # Fills in the initial conditions
 
         for i in range(n):
-            yprime = self.feval(func, x, y) # Evaluates dy/dx
+            # yprime = self.feval(func, x, y) # Evaluates dy/dx
+            yprime = mf.myFunc(x, y)
             
             for j in range(m):
                 y[j] = y[j] + h*yprime[j]
@@ -44,14 +46,14 @@ class ForwardEuler:
 
 
 
-    def myFunc(self, x, y):
-        dy = np.zeros((len(y)))
-        dy[0] = 3*(1+x) - y[0]
-        return dy
+    # def myFunc(self, x, y):
+    #     dy = np.zeros((len(y)))
+    #     dy[0] = 3*(1+x) - y[0]
+    #     return dy
 
 
     def execute(self):
-        [ts, ys] = self.main_FE('self.myFunc', self.yinit, self.x, self.h)
+        [ts, ys] = self.main_FE(self.yinit, self.x, self.h)
 
 
         # Calculates the exact solution, for comparison

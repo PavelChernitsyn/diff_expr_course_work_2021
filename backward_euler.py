@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import my_func as mf
 
 class BackwardEuler:
     def __init__(self, _h = 0.2, _x = np.array([1.0, 2.0]), _yinit = np.array([4.0])):
@@ -25,7 +26,8 @@ class BackwardEuler:
         ysol = np.append(ysol, y)
 
         for i in range(n):
-            yprime = self.myFunc(x+h, y)/(1+h)
+            # yprime = self.myFunc(x+h, y)/(1+h)
+            yprime = mf.myFunc(x+h, y)/(1+h)
 
             for j in range(m):
                 y[j] = y[j] + h*yprime[j]
@@ -38,10 +40,10 @@ class BackwardEuler:
 
         return [xsol, ysol]
 
-    def myFunc(self, x, y):
-        dy = np.zeros((len(y)))
-        dy[0] = 3*(1+x) - y[0]
-        return dy
+    # def myFunc(self, x, y):
+    #     dy = np.zeros((len(y)))
+    #     dy[0] = 3*(1+x) - y[0]
+    #     return dy
 
     def execute(self):
         [ts, ys] = self.main_BE(yinit=self.yinit, x_range=self.x, h=self.h)

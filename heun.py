@@ -1,6 +1,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import my_func as mf
 
 
 class Heun:
@@ -12,11 +13,11 @@ class Heun:
     def __del__(self):
         pass
 
-    def feval(self, funcName, *args):
-        return eval(funcName)(*args)
+    # def feval(self, funcName, *args):
+    #     return eval(funcName)(*args)
 
 
-    def main_H(self, func, yinit, x_range, h):
+    def main_H(self, yinit, x_range, h):
         m = len(yinit)
         n = int((x_range[-1] - x_range[0])/h)
         
@@ -31,13 +32,15 @@ class Heun:
         ysol = np.append(ysol, y)
 
         for i in range(n):
-            y0prime = self.feval(func, x, y)
+            # y0prime = self.feval(func, x, y)
+            y0prime = mf.myFunc(x, y)
 
             k1 = y0prime * h
 
             ypredictor = y + k1
 
-            y1prime = self.feval(func, x+h, ypredictor)
+            # y1prime = self.feval(func, x+h, ypredictor)
+            y1prime = mf.myFunc(x+h, ypredictor)
 
             for j in range(m):
                 y[j] = y[j] + (h/2)*y0prime[j] + (h/2)*y1prime[j]
@@ -51,15 +54,15 @@ class Heun:
         return [xsol, ysol]
 
 
-    def myFunc(seld, x, y):
-        dy = np.zeros((len(y)))
-        dy[0] = 3 * (1 + x) - y[0]
-        return dy
+    # def myFunc(seld, x, y):
+    #     dy = np.zeros((len(y)))
+    #     dy[0] = 3 * (1 + x) - y[0]
+    #     return dy
 
     # -----------------------
 
     def execute(self):
-        [ts, ys] = self.main_H('self.myFunc', self.yinit, self.x, self.h)
+        [ts, ys] = self.main_H(self.yinit, self.x, self.h)
 
 
         dt = int((self.x[-1] - self.x[0]) / self.h)
