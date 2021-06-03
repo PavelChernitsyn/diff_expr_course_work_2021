@@ -40,7 +40,6 @@ class FTCSDirichlet:
         self.U[0,:] = 0.0
         self.U[-1,:] = 0.0
         
-        # ----- Equation (15.8) in Lecture 15 -----
         for k in range(0, self.N-1):
             for i in range(1, self.M-1):
                 self.U[i, k+1] = self.r*self.U[i-1, k] + (1-2*self.r+self.s)*self.U[i,k] + self.r*self.U[i+1,k] 
