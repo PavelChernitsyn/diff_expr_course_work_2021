@@ -8,8 +8,10 @@ class Runge_Kutt:
         self.h = _h
         self.x = _x
         self.yinit = np.array([4.0])
+        self.f = open('tmp.txt', 'w')
 
     def __del__(self):
+        self.f.close()
         pass
 
     # def feval(self, funcName, *args):
@@ -23,8 +25,9 @@ class Runge_Kutt:
         x = x_range[0]
         y = yinit
         
-        xsol = np.empty(0)
-        xsol = np.append(xsol, x)
+        # xsol = np.empty(0)
+        # xsol = np.append(xsol, x)
+        self.f.write(str(x) + ' ')
 
         ysol = np.empty(0)
         ysol = np.append(ysol, y)
@@ -63,12 +66,15 @@ class Runge_Kutt:
                 y[j] = y[j] + h*(37*k1[j]/378 + 250*k3[j]/621 + 125*k4[j]/594 + 512*k6[j]/1771)
 
             x = x + h
-            xsol = np.append(xsol, x)
+            # xsol = np.append(xsol, x)
+            self.f.write(str(x) + ' ')
 
             for r in range(len(y)):
-                ysol = np.append(ysol, y[r])  
+                ysol = np.append(ysol, y[r])
 
-        return [xsol, ysol]
+        self.f.write('\n')  
+
+        return ysol
 
 
     # def myFunc(self, x, y):
@@ -77,17 +83,25 @@ class Runge_Kutt:
     #     return dy
 
     def execute(self):
-        [ts, ys] = self.RKF45(self.yinit, self.x, self.h)
-
+        ys = self.RKF45(self.yinit, self.x, self.h)
+        for index in ys:
+            self.f.write(str(index) + ' ')
+        self.f.write('\n')
 
         dt = int((self.x[-1]-self.x[0])/self.h)
-        t = [self.x[0]+i*self.h for i in range(dt+1)] 
+        t = [self.x[0]+i*self.h for i in range(dt+1)]
+        for index in t:
+            self.f.write(str(index) + ' ')
+        self.f.write('\n') 
         yexact = []
         for i in range(dt+1):
             ye = 3 * t[i] + np.exp(1 - t[i])
             yexact.append(ye)
+            self.f.write(str(ye) + ' ')
+        self.f.write('\n')
 
-        return ts, ys, t, yexact
+        # return ts, ys, t, yexact
+        return 0
 
 
 #         y_diff = ys - yexact

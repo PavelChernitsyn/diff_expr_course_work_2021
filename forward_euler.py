@@ -8,8 +8,10 @@ class ForwardEuler:
         self.h = _h
         self.x = _x
         self.yinit = np.array([4.0])
+        self.f = open('tmp.txt', 'w')
 
     def __del__(self):
+        self.f.close()
         pass
 
     # def feval(self, funcName, *args):
@@ -23,8 +25,9 @@ class ForwardEuler:
         x = x_range[0] # Initializes variable x
         y = yinit # Initializes variable y
         
-        xsol = np.empty(0) # Creates an empty array for x
-        xsol = np.append(xsol, x) # Fills in the first element of xsol
+        # xsol = np.empty(0) # Creates an empty array for x
+        # xsol = np.append(xsol, x) # Fills in the first element of xsol
+        self.f.write(str(x) + ' ')
 
         ysol = np.empty(0) # Creates an empty array for y
         ysol = np.append(ysol, y) # Fills in the initial conditions
@@ -37,12 +40,15 @@ class ForwardEuler:
                 y[j] = y[j] + h*yprime[j]
                 
             x += h # Increase x-step
-            xsol = np.append(xsol, x) # Saves it in the xsol array
-            
+            # xsol = np.append(xsol, x) # Saves it in the xsol array
+            self.f.write(str(x) + ' ')
+
             for r in range(len(y)):
                 ysol = np.append(ysol, y[r]) # Saves all new y's 
-                
-        return [xsol, ysol]
+
+        self.f.write('\n')
+
+        return ysol
 
 
 
@@ -53,18 +59,26 @@ class ForwardEuler:
 
 
     def execute(self):
-        [ts, ys] = self.main_FE(self.yinit, self.x, self.h)
-
+        ys = self.main_FE(self.yinit, self.x, self.h)
+        for index in ys:
+            self.f.write(str(index) + ' ')
+        self.f.write('\n')
 
         # Calculates the exact solution, for comparison
         dt = int((self.x[-1] - self.x[0]) / self.h)
         t = [self.x[0]+i*self.h for i in range(dt+1)]
+        for index in t:
+            self.f.write(str(index) + ' ')
+        self.f.write('\n')
         yexact = []
         for i in range(dt+1):
             ye = 3*t[i] + np.exp(1-t[i])
             yexact.append(ye)
+            self.f.write(str(ye) + ' ')
+        self.f.write('\n')
 
-        return ts, ys, t, yexact
+        # return ts, ys, t, yexact
+        return 0
 
 
 #         plt.plot(ts, ys, 'r')

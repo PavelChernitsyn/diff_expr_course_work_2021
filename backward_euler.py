@@ -67,9 +67,7 @@ class BackwardEuler:
         for index in t:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
-        # for index in t:
-        #     self.f.write(str(index) + ' ')
-        # self.f.write('\n')
+        
         yexact = []
         for i in range(dt+1):
             ye = 3 * t[i] + np.exp(1 - t[i])

@@ -7,8 +7,10 @@ class ABM:
         self.h = _h
         self.x = _x
         self.yinit = np.array([4.0])
+        self.f = open('tmp.txt', 'w')
 
     def __del__(self):
+        self.f.close()
         pass
 
     # def feval(self, funcName, *args):
@@ -122,14 +124,27 @@ class ABM:
 
     def execute(self):
         [ts, ys] = self.ABM4thOrder(self.yinit, self.x, self.h)
-
+        for index in ts:
+            self.f.write(str(index) + ' ')
+        self.f.write('\n')
+        for index in ys:
+            self.f.write(str(index) + ' ')
+        self.f.write('\n')
 
         dt = int((self.x[-1]-self.x[0])/self.h)
         t = [self.x[0]+i*self.h for i in range(dt+1)]
+        for index in t:
+            self.f.write(str(index) + ' ')
+        self.f.write('\n')
+
         yexact = []
         for i in range(dt+1):
             ye = 3 * t[i] + np.exp(1 - t[i])
             yexact.append(ye)
+            self.f.write(str(ye) + ' ')
+        self.f.write('\n')
+
+        return 0
 
         # plt.plot(ts, ys, 'r')
         # plt.plot(t, yexact, 'b')
@@ -140,7 +155,7 @@ class ABM:
         # plt.tight_layout()
         # plt.show()
 
-        return ts, ys, t, yexact
+        # return ts, ys, t, yexact
 
     # diff = ys - yexact
     # print("Maximum difference =", np.max(abs(diff)))
