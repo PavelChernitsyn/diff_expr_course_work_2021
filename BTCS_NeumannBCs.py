@@ -89,9 +89,9 @@ class BTCSNeumann:
         plt.show()
 
 
-def main():
-    sim = BTCSNeumann(50, 60)
-    sim.plot_()
+# def main():
+#     sim = BTCSNeumann(50, 60)
+#     sim.plot_()
     
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

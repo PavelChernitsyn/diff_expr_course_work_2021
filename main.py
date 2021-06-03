@@ -1,6 +1,7 @@
-import tkinter as tk
 import gui
 
-root = tk.Tk() 
-gui.MainApplication(root)
-root.mainloop()
+def main():
+    gui.MainApplication()
+    
+if __name__ == "__main__":
+    main()

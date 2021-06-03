@@ -106,12 +106,12 @@ class CrankNicolsonNeumann:
         plt.show()
 
 
-def main():
-    sim = CrankNicolsonNeumann(50, 60)
-    sim.plot_()
+# def main():
+#     sim = CrankNicolsonNeumann(50, 60)
+#     sim.plot_()
     
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 
 #M = 50 # GRID POINTS on space interval
 #N = 60 # GRID POINTS on time interval

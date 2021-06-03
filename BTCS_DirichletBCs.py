@@ -83,12 +83,12 @@ class BTCSDirichlet:
         plt.show()
 
 
-def main():
-    sim = BTCSDirichlet(50, 60)
-    sim.plot_()
+# def main():
+#     sim = BTCSDirichlet(50, 60)
+#     sim.plot_()
     
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 
 
 #M = 50 # GRID POINTS on space interval

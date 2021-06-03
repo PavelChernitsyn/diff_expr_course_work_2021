@@ -1,109 +1,39 @@
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
-from tkinter import ttk 
-import tkinter as tk
-import numpy as np
-import backward_euler
-import forward_euler
-import runge_kutta
-import heun
-import adams_bashforth_moulton
-import os
+import PySimpleGUI as sg
+import BTCS_DirichletBCs
+import FTCS_DirichletBCs
+import BTCS_NeumannBCs
+import CN_NeumannBCs
 
-class Plotter(FigureCanvasTkAgg):
+class MainApplication():
+    def __init__(self):
+        layout = [[sg.Button("BTCSDirichlet")], [sg.Button("FTCSDirichlet")], 
+                  [sg.Button("BTCSNeumann")], [sg.Button("CrankNicolsonNeumann")]]
 
-    def __init__(self, master):
+        # Create the window
+        self.window = sg.Window("Diffusion", layout)
 
-        self.figure = Figure(dpi=100)
-        super().__init__(self.figure, master=master)
-        self.axes = self.figure.add_subplot(111)
-        self.get_tk_widget().grid(column=0, row=0, sticky='nsew')
+        # Create an event loop
+        while True:
+            event, values = self.window.read()
+            # End program if user closes window
+            if event == sg.WIN_CLOSED:
+                break
 
-    def draw_lists(self, flag):
+            if event == "BTCSDirichlet":
+                sim = BTCS_DirichletBCs.BTCSDirichlet(50, 60)
+                sim.plot_()
 
-        self.axes.clear()
-        # x_list = [x for x in range(0, 100)]
-        # x_list = np.arange(1, 2, .01)
-        # y_list = [x for x in x_list]
-        # print (points[0])
-        # print (points[1])
-        # print (points[2])
-        # print (points[3])
-        # self.axes.plot(points[0], points[1], color='y')
-        # self.axes.plot(points[2], points[3], color='b')
-        # self.draw_idle()
-    
-        x = [[],[],[],[]]
-        i = 0
+            if event == "FTCSDirichlet":
+                sim = FTCS_DirichletBCs.FTCSDirichlet(40, 70)
+                sim.plot_()
 
-        f = open('tmp.txt', 'r')
-        for line in f:
-            if (line == '\n'):
-                    continue
-            for elem in line.split(' '):
-                if (elem == '\n'):
-                    continue
-                x[i].append(float(elem))
-            i+=1
-        f.close()
-        # os.remove('tmp.txt')
+            if event == "BTCSNeumann":
+                sim = BTCS_NeumannBCs.BTCSNeumann(50, 60)
+                sim.plot_()
 
-        self.axes.plot(x[0], x[1], color='y')
-        self.axes.plot(x[2], x[3], color='b')
-        self.draw_idle()
-
-class MainApplication(ttk.Frame):
-
-    def __init__(self, master, *args, **kwargs):
-
-        super().__init__(master)
-        self.grid(column=0, row=0, sticky='nsew')
-
-        frame = ttk.Frame(self, borderwidth=8)
-        frame.grid(column=0, row=0, sticky='nsew')
-        frame.rowconfigure(0, weight=1)
-
-        notes = ttk.Notebook(frame)
-        notes.grid(column=0, row=0, sticky='nsew')
-        notes.rowconfigure(0, weight=1)
-
-        page = ttk.Frame(notes)
-        notes.add(page, text='Picture')
-
-
-        plot = Plotter(page)
-
-        input_frame = ttk.Frame(self)
-        input_frame.grid(column=1, row=0, sticky='nsew')
-
-        # this binding doesn't update the plot
-        button_BE = ttk.Button(input_frame, text='Backward Euler', 
-                            command=lambda: 
-                            plot.draw_lists(backward_euler.BackwardEuler().execute()))
-        button_FE = ttk.Button(input_frame, text='Forward Euler', 
-                            command=lambda: 
-                            plot.draw_lists(forward_euler.ForwardEuler().execute()))
-        button_RK = ttk.Button(input_frame, text='Runge Kutt', 
-                            command=lambda: 
-                            plot.draw_lists(runge_kutta.Runge_Kutt().execute()))
-        button_H = ttk.Button(input_frame, text='Heun', 
-                            command=lambda: 
-                            plot.draw_lists(heun.Heun().execute()))
-        button_ADM = ttk.Button(input_frame, text='Adams-Bashforth-Moulton', 
-                            command=lambda: 
-                            plot.draw_lists(adams_bashforth_moulton.ABM().execute()))
-                            
-        button_BE.grid(column=0, row=5, columnspan=2, sticky='ew')
-        button_FE.grid(column=0, row=7, columnspan=2, sticky='ew')
-        button_RK.grid(column=0, row=9, columnspan=2, sticky='ew')
-        button_H.grid(column=0, row=11, columnspan=2, sticky='ew')
-        button_ADM.grid(column=0, row=13, columnspan=2, sticky='ew')
+            if event == "CrankNicolsonNeumann":
+                sim = CN_NeumannBCs.CrankNicolsonNeumann(50, 60)
+                sim.plot_()
 
     def __del__(self):
-        os.remove('tmp.txt')
-        pass
-
-
-# root = tk.Tk() 
-# MainApplication(root)
-# root.mainloop()
+        self.window.close()

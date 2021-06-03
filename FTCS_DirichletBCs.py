@@ -65,12 +65,12 @@ class FTCSDirichlet:
         plt.show()
 
 
-def main():
-    sim = FTCSDirichlet(40, 70)
-    sim.plot_()
+# def main():
+#     sim = FTCSDirichlet(40, 70)
+#     sim.plot_()
     
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
     
 #M = 40 # GRID POINTS on space interval
 #N = 70 # GRID POINTS on time interval
