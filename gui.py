@@ -46,7 +46,7 @@ class Plotter(FigureCanvasTkAgg):
                 x[i].append(float(elem))
             i+=1
         f.close()
-        os.remove('tmp.txt')
+        # os.remove('tmp.txt')
 
         self.axes.plot(x[0], x[1], color='y')
         self.axes.plot(x[2], x[3], color='b')
@@ -98,6 +98,10 @@ class MainApplication(ttk.Frame):
         button_RK.grid(column=0, row=9, columnspan=2, sticky='ew')
         button_H.grid(column=0, row=11, columnspan=2, sticky='ew')
         button_ADM.grid(column=0, row=13, columnspan=2, sticky='ew')
+
+    def __del__(self):
+        os.remove('tmp.txt')
+        pass
 
 
 # root = tk.Tk() 
