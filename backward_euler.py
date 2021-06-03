@@ -7,8 +7,10 @@ class BackwardEuler:
         self.h = _h
         self.x = _x
         self.yinit = np.array([4.0])
+        self.f = open('tmp.txt', 'w')
 
     def __del__(self):
+        self.f.close()
         pass
 
     def main_BE(self, yinit, x_range, h):
@@ -18,8 +20,9 @@ class BackwardEuler:
         x = x_range[0]
         y = yinit
 
-        xsol = np.empty(0)
-        xsol = np.append(xsol, x)
+        # xsol = np.empty(0)
+        # xsol = np.append(xsol, x)
+        self.f.write(str(x) + ' ')
 
         global ysol
         ysol = np.empty(0)
@@ -33,12 +36,15 @@ class BackwardEuler:
                 y[j] = y[j] + h*yprime[j]
 
             x += h
-            xsol = np.append(xsol, x)
+            # xsol = np.append(xsol, x)
+            self.f.write(str(x) + ' ')
 
             for r in range(len(y)):
                 ysol = np.append(ysol, y[r])  # Saves all new y's
 
-        return [xsol, ysol]
+        self.f.write('\n')
+
+        return ysol
 
     # def myFunc(self, x, y):
     #     dy = np.zeros((len(y)))
@@ -46,18 +52,34 @@ class BackwardEuler:
     #     return dy
 
     def execute(self):
-        [ts, ys] = self.main_BE(yinit=self.yinit, x_range=self.x, h=self.h)
+        ys = self.main_BE(yinit=self.yinit, x_range=self.x, h=self.h)
+        # for index in ts:
+        #     self.f.write(str(index) + ' ')
+        # self.f.write('\n')
+        for index in ys:
+            self.f.write(str(index) + ' ')
+        self.f.write('\n')
 
 
         #--- Calculate the exact solution, for comparison ---#
         dt = int((self.x[-1] - self.x[0]) / self.h)
         t = [self.x[0]+i*self.h for i in range(dt+1)]
+        for index in t:
+            self.f.write(str(index) + ' ')
+        self.f.write('\n')
+        # for index in t:
+        #     self.f.write(str(index) + ' ')
+        # self.f.write('\n')
         yexact = []
         for i in range(dt+1):
             ye = 3 * t[i] + np.exp(1 - t[i])
             yexact.append(ye)
+            self.f.write(str(ye) + ' ')
+        self.f.write('\n')
+        #self.f.close()
 
-        return ts, ys, t, yexact
+        # return ys, t, yexact
+        return 0
 
 
         # plt.plot(ts, ys, 'r')
@@ -70,5 +92,5 @@ class BackwardEuler:
         # plt.tight_layout()
         # plt.show()
 
-# x = BackwardEuler()
-# x.execute()
+x = BackwardEuler()
+x.execute()

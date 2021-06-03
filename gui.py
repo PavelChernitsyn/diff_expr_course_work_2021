@@ -8,6 +8,7 @@ import forward_euler
 import runge_kutta
 import heun
 import adams_bashforth_moulton
+import os
 
 class Plotter(FigureCanvasTkAgg):
 
@@ -18,7 +19,7 @@ class Plotter(FigureCanvasTkAgg):
         self.axes = self.figure.add_subplot(111)
         self.get_tk_widget().grid(column=0, row=0, sticky='nsew')
 
-    def draw_lists(self, points):
+    def draw_lists(self, flag):
 
         self.axes.clear()
         # x_list = [x for x in range(0, 100)]
@@ -28,8 +29,27 @@ class Plotter(FigureCanvasTkAgg):
         # print (points[1])
         # print (points[2])
         # print (points[3])
-        self.axes.plot(points[0], points[1], color='y')
-        self.axes.plot(points[2], points[3], color='b')
+        # self.axes.plot(points[0], points[1], color='y')
+        # self.axes.plot(points[2], points[3], color='b')
+        # self.draw_idle()
+    
+        x = [[],[],[],[]]
+        i = 0
+
+        f = open('tmp.txt', 'r')
+        for line in f:
+            if (line == '\n'):
+                    continue
+            for elem in line.split(' '):
+                if (elem == '\n'):
+                    continue
+                x[i].append(float(elem))
+            i+=1
+        f.close()
+        os.remove('tmp.txt')
+
+        self.axes.plot(x[0], x[1], color='y')
+        self.axes.plot(x[2], x[3], color='b')
         self.draw_idle()
 
 class MainApplication(ttk.Frame):
