@@ -13,7 +13,7 @@ class BTCSDirichlet:
         self.x0 = 0
         self.xL = 1
         self.t0 = 0
-        self.tF = 0.2
+        self.tF = 1
         self.D = 0.1 # Diffusion coefficient
         self.alpha = -3 # Reaction rate
         self.createGrid()
@@ -59,10 +59,22 @@ class BTCSDirichlet:
             b2 = np.array(self.U[1:self.M-1, k-1])
             b = b1 + b2  # Right hand side
             self.U[1:self.M-1, k] = np.linalg.solve(A,b)  # Solve x=A\b
-
+        
+        dtS = int((self.xspan[-1] - self.xspan[0])/(self.D))
+        tS = [self.xspan[0]+i*(self.D) for i in range(int(dtS)+1)]
+        print(tS)
+        yexact = []
+        for i in range(dtS+1):
+            ye = 4*tS[i] - 4*tS[i]**2
+            yexact.append(ye)
+        print(yexact)
         # ----- Checks if the solution is correct:
         g = np.allclose(np.dot(A,self.U[1:self.M-1,self.N-1]), b)
         print(g)
+        print(self.xspan, self.tspan)
+        plt.plot(self.tspan, self.U[:, 1], 'r')
+        plt.plot(tS, yexact, 'b')
+        plt.show()
      
         
     def plot_(self):
@@ -75,7 +87,7 @@ class BTCSDirichlet:
         ax.plot_surface(X, T, self.U, linewidth=0,
                                cmap=cm.coolwarm, antialiased=False)
         
-        ax.set_xticks([0, 0.05, 0.1, 0.15, 0.2])
+        ax.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1])
         ax.set_xlabel('Time')
         ax.set_ylabel('Space')
         ax.set_zlabel('U')

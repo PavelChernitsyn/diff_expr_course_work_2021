@@ -13,9 +13,9 @@ class CrankNicolsonNeumann:
         self.x0 = 0
         self.xL = 1
         self.t0 = 0
-        self.tF = 0.2
-        self.D = 0.5  # Diffusion coefficient
-        self.alpha = -5.0 # Reaction rate
+        self.tF = 1
+        self.D = 0.1  # Diffusion coefficient
+        self.alpha = -3.0 # Reaction rate
         self.params()
         self.createGrid()
         self.matrices()
@@ -82,10 +82,21 @@ class CrankNicolsonNeumann:
             b2 = np.matmul(self.A_rhs, np.array(self.U[0:self.M, k-1]))
             b = b1 + b2  # Right hand side
             self.U[0:self.M, k] = np.linalg.solve(self.A,b)  # Solve x=A\b
-            
+        
+        dtS = int((self.xspan[-1] - self.xspan[0])/(self.D))
+        tS = [self.xspan[0]+i*(self.D) for i in range(int(dtS)+1)]
+        print(tS)
+        yexact = []
+        for i in range(dtS+1):
+            ye = 4*tS[i] - 4*tS[i]**2
+            yexact.append(ye)
+        print(yexact)
         # ----- Checks if the solution is correct:
         gc = np.allclose(np.dot(self.A,self.U[0:self.M,self.N-1]), b)
         print(gc)
+        plt.plot(self.tspan, self.U[:, 1], 'r')
+        plt.plot(tS, yexact, 'b')
+        plt.show()
         
         
     def plot_(self):
@@ -98,7 +109,7 @@ class CrankNicolsonNeumann:
         ax.plot_surface(X, T, self.U, linewidth=0,
                                cmap=cm.coolwarm, antialiased=False)
         
-        ax.set_xticks([0, 0.05, 0.1, 0.15, 0.2])
+        ax.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1])
         ax.set_xlabel('Time')
         ax.set_ylabel('Space')
         ax.set_zlabel('U')
