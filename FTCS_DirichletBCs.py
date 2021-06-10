@@ -54,7 +54,7 @@ class FTCSDirichlet:
             ye = 4*tS[i] - 4*tS[i]**2
             yexact.append(ye)
 
-        plt.plot(9*self.tspan[:40], self.U[:, 1], 'r')
+        plt.plot(8.8*self.tspan[:40], self.U[:, 1], 'r')
         plt.plot(tS, yexact, 'b')
         plt.show()
         
@@ -71,7 +71,7 @@ class FTCSDirichlet:
         ax.set_xlabel('Space')
         ax.set_ylabel('Time')
         ax.set_zlabel('U')
-        ax.view_init(elev=33, azim=36)
+        # ax.view_init(elev=33, azim=36)
         plt.tight_layout()
         plt.show()
 
