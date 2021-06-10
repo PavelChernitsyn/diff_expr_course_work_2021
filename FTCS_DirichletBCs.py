@@ -45,6 +45,18 @@ class FTCSDirichlet:
                 self.U[i, k+1] = self.r*self.U[i-1, k] + (1-2*self.r+self.s)*self.U[i,k] + self.r*self.U[i+1,k] 
                 
         self.T, self.X = np.meshgrid(self.tspan, self.xspan)
+        print(self.xspan, self.tspan)
+        dtS = int((self.xspan[-1] - self.xspan[0])/(self.D))
+        tS = [self.xspan[0]+i*(self.D) for i in range(int(dtS)+1)]
+        
+        yexact = []
+        for i in range(dtS+1):
+            ye = 4*tS[i] - 4*tS[i]**2
+            yexact.append(ye)
+
+        plt.plot(9*self.tspan[:40], self.U[:, 1], 'r')
+        plt.plot(tS, yexact, 'b')
+        plt.show()
         
     def plot_(self):
         fig = plt.figure()
