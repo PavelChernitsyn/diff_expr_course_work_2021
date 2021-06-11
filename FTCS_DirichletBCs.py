@@ -15,13 +15,26 @@ class FTCSDirichlet:
         self.tF = tF_
         self.D = D_ # Diffusion coefficient
         self.alpha = alpha_ # Reaction rate
+        self.f = open('tmp.txt', 'w')
         self.createGrid()
         self.params()
         self.solve()
         
+    def __del__(self):
+        # self.f.close()
+        pass
+        
     def createGrid(self):
         self.xspan = np.linspace(self.x0, self.xL, self.M)
         self.tspan = np.linspace(self.t0, self.tF, self.N)
+
+        for elem in self.tspan:
+            self.f.write(str(elem*8.8) + ' ')
+        self.f.write('\n')
+
+        for elem in self.xspan:
+            self.f.write(str(elem) + ' ')
+        self.f.write('\n')
         
     def params(self):
         # ----- Spatial discretization step -----
@@ -44,44 +57,20 @@ class FTCSDirichlet:
             for i in range(1, self.M-1):
                 self.U[i, k+1] = self.r*self.U[i-1, k] + (1-2*self.r+self.s)*self.U[i,k] + self.r*self.U[i+1,k] 
                 
+        np.savetxt("tmp_U.txt", self.U)
+
         self.T, self.X = np.meshgrid(self.tspan, self.xspan)
-        print(self.xspan, self.tspan)
+        
         dtS = int((self.xspan[-1] - self.xspan[0])/(self.D))
         tS = [self.xspan[0]+i*(self.D) for i in range(int(dtS)+1)]
         
-        yexact = []
+        for elem in tS:
+            self.f.write(str(elem) + ' ')
+        self.f.write('\n')
+
         for i in range(dtS+1):
             ye = 4*tS[i] - 4*tS[i]**2
-            yexact.append(ye)
+            self.f.write(str(ye) + ' ')
+        self.f.write('\n')
 
-        plt.plot(8.8*self.tspan[:40], self.U[:, 1], 'r')
-        plt.plot(tS, yexact, 'b')
-        plt.show()
-        
-    def plot_(self):
-        fig = plt.figure()
-        ax = fig.gca(projection='3d')
-        
-        ax.plot_surface(self.X, self.T, self.U, cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
-        
-        # ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0])
-        # ax.set_yticks([0, 0.05, 0.1, 0.15, 0.2])
-
-        ax.set_xlabel('Space')
-        ax.set_ylabel('Time')
-        ax.set_zlabel('U')
-        # ax.view_init(elev=33, azim=36)
-        plt.tight_layout()
-        plt.show()
-
-
-# def main():
-#     sim = FTCSDirichlet(40, 70)
-#     sim.plot_()
-    
-# if __name__ == "__main__":
-#     main()
-    
-#M = 40 # GRID POINTS on space interval
-#N = 70 # GRID POINTS on time interval
+        self.f.close()

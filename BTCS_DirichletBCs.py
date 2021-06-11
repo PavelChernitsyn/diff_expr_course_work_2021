@@ -71,6 +71,7 @@ class BTCSDirichlet:
             b2 = np.array(self.U[1:self.M-1, k-1])
             b = b1 + b2  # Right hand side
             self.U[1:self.M-1, k] = np.linalg.solve(A,b)  # Solve x=A\b
+        np.savetxt("tmp_U.txt", self.U)
         
         dtS = int((self.xspan[-1] - self.xspan[0])/(self.D))
         tS = [self.xspan[0]+i*(self.D) for i in range(int(dtS)+1)]
@@ -87,5 +88,3 @@ class BTCSDirichlet:
         g = np.allclose(np.dot(A,self.U[1:self.M-1,self.N-1]), b)
 
         self.f.close()
-
-        np.savetxt("tmp_U.txt", self.U)

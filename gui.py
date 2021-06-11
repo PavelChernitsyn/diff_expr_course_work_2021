@@ -15,7 +15,7 @@ class MainApplication():
 
         f = open('tmp.txt', 'r')
         for line in f:
-            if (line == '\n' or i > 5):
+            if (line == '\n'):
                     continue
             for elem in line.split(' '):
                 if (elem == '\n'):
@@ -28,7 +28,12 @@ class MainApplication():
         
         X, T = np.meshgrid(x[0], x[1])
 
-        plt.plot(x[0], U[:, 1], 'r')
+        if (len(x[0]) < len(x[1])):
+            cut = len(x[0])
+        else:
+            cut = len(x[1])
+
+        plt.plot(x[0][:cut], U[:, 1], 'r')
         plt.plot(x[2], x[3], 'b')
         plt.show()
 
@@ -38,7 +43,7 @@ class MainApplication():
         ax.plot_surface(X, T, U, linewidth=0,
                                cmap=cm.coolwarm, antialiased=False)
         
-        ax.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1])
+        # ax.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1])
         ax.set_xlabel('Time')
         ax.set_ylabel('Space')
         ax.set_zlabel('U')
@@ -64,20 +69,19 @@ class MainApplication():
 
             if event == "BTCSDirichlet":
                 sim = BTCS_DirichletBCs.BTCSDirichlet(50, 50)
-                # sim.plot_()
                 self.plotter()
 
             if event == "FTCSDirichlet":
                 sim = FTCS_DirichletBCs.FTCSDirichlet(40, 70)
-                sim.plot_()
+                self.plotter()
 
             if event == "BTCSNeumann":
                 sim = BTCS_NeumannBCs.BTCSNeumann(50, 50)
-                sim.plot_()
+                self.plotter()
 
             if event == "CrankNicolsonNeumann":
                 sim = CN_NeumannBCs.CrankNicolsonNeumann(50, 50)
-                sim.plot_()
+                self.plotter()
 
     def __del__(self):
         self.window.close()

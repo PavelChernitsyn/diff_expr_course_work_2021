@@ -16,11 +16,15 @@ class CrankNicolsonNeumann:
         self.tF = tF_
         self.D = D_ # Diffusion coefficient
         self.alpha = alpha_ # Reaction rate
+        self.f = open('tmp.txt', 'w')
         self.params()
         self.createGrid()
         self.matrices()
         self.solve()
         
+    def __del__(self):
+        # self.f.close()
+        pass
         
     def params(self):
         # ----- Spatial discretization step -----
@@ -36,7 +40,14 @@ class CrankNicolsonNeumann:
     def createGrid(self):
         self.xspan = np.linspace(self.x0, self.xL, self.M)
         self.tspan = np.linspace(self.t0, self.tF, self.N)
-        
+
+        for elem in self.tspan:
+            self.f.write(str(elem) + ' ')
+        self.f.write('\n')
+
+        for elem in self.xspan:
+            self.f.write(str(elem) + ' ')
+        self.f.write('\n')
         
     def matrices(self):
         main_diag_a0 = self.a0*np.ones((1, self.M))
@@ -82,47 +93,20 @@ class CrankNicolsonNeumann:
             b2 = np.matmul(self.A_rhs, np.array(self.U[0:self.M, k-1]))
             b = b1 + b2  # Right hand side
             self.U[0:self.M, k] = np.linalg.solve(self.A,b)  # Solve x=A\b
-        
+        np.savetxt("tmp_U.txt", self.U)
+
         dtS = int((self.xspan[-1] - self.xspan[0])/(self.D))
         tS = [self.xspan[0]+i*(self.D) for i in range(int(dtS)+1)]
-        print(tS)
-        yexact = []
+        
+        for elem in tS:
+            self.f.write(str(elem) + ' ')
+        self.f.write('\n')
+
         for i in range(dtS+1):
             ye = 4*tS[i] - 4*tS[i]**2
-            yexact.append(ye)
-        print(yexact)
+            self.f.write(str(ye) + ' ')
+        self.f.write('\n')
         # ----- Checks if the solution is correct:
         gc = np.allclose(np.dot(self.A,self.U[0:self.M,self.N-1]), b)
-        print(gc)
-        plt.plot(self.tspan, self.U[:, 1], 'r')
-        plt.plot(tS, yexact, 'b')
-        plt.show()
-        
-        
-    def plot_(self):
-        # ----- Surface plot -----
-        X, T = np.meshgrid(self.tspan, self.xspan)
 
-        fig = plt.figure()
-        ax = fig.gca(projection='3d')
-
-        ax.plot_surface(X, T, self.U, linewidth=0,
-                               cmap=cm.coolwarm, antialiased=False)
-        
-        ax.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1])
-        ax.set_xlabel('Time')
-        ax.set_ylabel('Space')
-        ax.set_zlabel('U')
-        plt.tight_layout()
-        plt.show()
-
-
-# def main():
-#     sim = CrankNicolsonNeumann(50, 60)
-#     sim.plot_()
-    
-# if __name__ == "__main__":
-#     main()
-
-#M = 50 # GRID POINTS on space interval
-#N = 60 # GRID POINTS on time interval
+        self.f.close()
