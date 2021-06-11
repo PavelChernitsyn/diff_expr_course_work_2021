@@ -7,15 +7,15 @@ from matplotlib import cm
 
 class BTCSNeumann:
     
-    def __init__(self, M, N):
-        self.M = M
-        self.N = N
-        self.x0 = 0
-        self.xL = 1
-        self.t0 = 0
-        self.tF = 1
-        self.D = 0.1  # Diffusion coefficient
-        self.alpha = -3 # Reaction rate
+    def __init__(self, M_, N_, x0_ = 0, xL_ = 1, t0_ = 0, tF_ = 1, D_ = 0.1, alpha_ = -3):
+        self.M = M_
+        self.N = N_
+        self.x0 = x0_
+        self.xL = xL_
+        self.t0 = t0_
+        self.tF = tF_
+        self.D = D_ # Diffusion coefficient
+        self.alpha = alpha_ # Reaction rate
         self.params()
         self.createGrid()
         self.solve()

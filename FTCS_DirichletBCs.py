@@ -6,15 +6,15 @@ from matplotlib import cm
 
 class FTCSDirichlet:
     
-    def __init__(self, M, N):
-        self.M = M
-        self.N = N
-        self.x0 = 0
-        self.xL = 1.0
-        self.t0 = 0
-        self.tF = 0.2
-        self.D = 0.1 # Diffusion coefficient
-        self.alpha = -3 # Reaction rate
+    def __init__(self, M_, N_, x0_ = 0, xL_ = 1, t0_ = 0, tF_ = 0.2, D_ = 0.1, alpha_ = -3):
+        self.M = M_
+        self.N = N_
+        self.x0 = x0_
+        self.xL = xL_
+        self.t0 = t0_
+        self.tF = tF_
+        self.D = D_ # Diffusion coefficient
+        self.alpha = alpha_ # Reaction rate
         self.createGrid()
         self.params()
         self.solve()
@@ -65,8 +65,8 @@ class FTCSDirichlet:
         ax.plot_surface(self.X, self.T, self.U, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
         
-        ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0])
-        ax.set_yticks([0, 0.05, 0.1, 0.15, 0.2])
+        # ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0])
+        # ax.set_yticks([0, 0.05, 0.1, 0.15, 0.2])
 
         ax.set_xlabel('Space')
         ax.set_ylabel('Time')
