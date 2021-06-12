@@ -37,15 +37,6 @@ class BTCSNeumann:
     def createGrid(self):
         self.xspan = np.linspace(self.x0, self.xL, self.M)
         self.tspan = np.linspace(self.t0, self.tF, self.N)
-
-        for elem in self.tspan:
-            self.f.write(str(elem) + ' ')
-        self.f.write('\n')
-
-        for elem in self.xspan:
-            self.f.write(str(elem) + ' ')
-        self.f.write('\n')
-        
         
     def solve(self):
         maindiag = (1 + 2*self.r - self.s)*np.ones((1,self.M))
