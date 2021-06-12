@@ -31,6 +31,7 @@ class MainApplication():
 
             if event == "FTCSDirichlet":
                 sim = FTCS_DirichletBCs.FTCSDirichlet(40, 70)
+                plt.plot_()
 
             if event == "BTCSNeumann":
                 sim = BTCS_NeumannBCs.BTCSNeumann(50, 50)
@@ -40,7 +41,7 @@ class MainApplication():
                 sim = CN_NeumannBCs.CrankNicolsonNeumann(50, 50)
                 plt.plot_()
 
-        plt.__del__()
+        # plt.__del__()
 
     def __del__(self):
         self.window.close()

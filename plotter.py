@@ -11,49 +11,24 @@ class Plotter:
         self.xL = xL_
         self.t0 = t0_
         self.tF = tF_
-        xspan = np.linspace(self.x0, self.xL, self.M)
-        tspan = np.linspace(self.t0, self.tF, self.N)
+        self.xspan = np.linspace(self.x0, self.xL, self.M)
+        self.tspan = np.linspace(self.t0, self.tF, self.N)
 
-        f = open('tmp_grid.txt', 'w')
-
-        for elem in xspan:
-            f.write(str(elem) + ' ')
-        f.write('\n')
-
-        for elem in tspan:
-            f.write(str(elem) + ' ')
-        f.write('\n')
-
-        f.close()
-
-        X, T = np.meshgrid(tspan, xspan)
+        X, T = np.meshgrid(self.tspan, self.xspan)
 
         np.savetxt("tmp_meshgrid_X.txt", X)
         np.savetxt("tmp_meshgrid_T.txt", T)
         # self.plot_()
 
-    def __del__(self):
-        os.remove("tmp_grid.txt")
-        os.remove("tmp_meshgrid_X.txt")
-        os.remove("tmp_meshgrid_T.txt")
-        os.remove("tmp_U.txt")
-        os.remove("tmp.txt")
+    # def __del__(self):
+    #     os.remove("tmp_grid.txt")
+    #     os.remove("tmp_meshgrid_X.txt")
+    #     os.remove("tmp_meshgrid_T.txt")
+    #     os.remove("tmp_U.txt")
+    #     os.remove("tmp.txt")
 
     def plot_(self):
-        grid = [[],[]] #tspan, xspan
         x = [[],[]] #tS, yexact
-        i = 0
-
-        f = open('tmp_grid.txt', 'r')
-        for line in f:
-            if (line == '\n'):
-                    continue
-            for elem in line.split(' '):
-                if (elem == '\n'):
-                    continue
-                grid[i].append(float(elem))
-            i+=1
-        f.close()
         i = 0
 
         f = open('tmp.txt', 'r')
@@ -66,19 +41,18 @@ class Plotter:
                 x[i].append(float(elem))
             i+=1
         f.close()
-        # os.remove("tmp.txt")
 
         U = np.loadtxt("tmp_U.txt")
         X = np.loadtxt("tmp_meshgrid_X.txt")
         T = np.loadtxt("tmp_meshgrid_T.txt")
 
 
-        if (len(grid[0]) < len(grid[1])):
-            cut = len(grid[0])
+        if (len(self.xspan) < len(self.tspan)):
+            cut = len(self.xspan)
         else:
-            cut = len(grid[1])
+            cut = len(self.tspan)
 
-        plt.plot(grid[0][:cut], U[:, 1], 'r')
+        plt.plot(self.xspan[:cut], U[:, 1], 'r')
         plt.plot(x[0], x[1], 'b')
         plt.show()
 

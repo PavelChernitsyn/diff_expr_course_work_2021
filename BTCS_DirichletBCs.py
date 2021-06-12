@@ -27,7 +27,6 @@ class BTCSDirichlet:
         
     def createGrid(self):
         self.xspan = np.linspace(self.x0, self.xL, self.M)
-        self.tspan = np.linspace(self.t0, self.tF, self.N)
         
     def params(self):
         # ----- Spatial discretization step -----
