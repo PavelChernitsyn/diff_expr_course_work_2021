@@ -26,7 +26,7 @@ class MainApplication():
                 break
 
             if event == "BTCSDirichlet":
-                sim = BTCS_DirichletBCs.BTCSDirichlet(50, 50)
+                sim = BTCS_DirichletBCs.BTCSDirichlet(40, 70)
                 plt.plot_()
 
             if event == "FTCSDirichlet":
@@ -34,14 +34,14 @@ class MainApplication():
                 plt.plot_()
 
             if event == "BTCSNeumann":
-                sim = BTCS_NeumannBCs.BTCSNeumann(50, 50)
+                sim = BTCS_NeumannBCs.BTCSNeumann(40, 70)
                 plt.plot_()
 
             if event == "CrankNicolsonNeumann":
-                sim = CN_NeumannBCs.CrankNicolsonNeumann(50, 50)
+                sim = CN_NeumannBCs.CrankNicolsonNeumann(40, 70)
                 plt.plot_()
 
-        # plt.__del__()
+        plt.__del__()
 
     def __del__(self):
         self.window.close()

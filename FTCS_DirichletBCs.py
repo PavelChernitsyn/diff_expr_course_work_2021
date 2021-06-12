@@ -28,14 +28,6 @@ class FTCSDirichlet:
         self.xspan = np.linspace(self.x0, self.xL, self.M)
         self.tspan = np.linspace(self.t0, self.tF, self.N)
 
-        for elem in self.tspan:
-            self.f.write(str(elem*8.8) + ' ')
-        self.f.write('\n')
-
-        for elem in self.xspan:
-            self.f.write(str(elem) + ' ')
-        self.f.write('\n')
-        
     def params(self):
         # ----- Spatial discretization step -----
         dx = (self.xL - self.x0)/(self.M - 1)

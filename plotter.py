@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 
 class Plotter:
-    def __init__(self, M_ = 50, N_ = 50, x0_ = 0, xL_ = 1, t0_ = 0, tF_ = 1):
+    def __init__(self, M_ = 40, N_ = 70, x0_ = 0, xL_ = 1, t0_ = 0, tF_ = 1):
         self.M = M_
         self.N = N_
         self.x0 = x0_
@@ -20,13 +20,9 @@ class Plotter:
         np.savetxt("tmp_meshgrid_T.txt", T)
         # self.plot_()
 
-    # def __del__(self):
-    #     os.remove("tmp_grid.txt")
-    #     os.remove("tmp_meshgrid_X.txt")
-    #     os.remove("tmp_meshgrid_T.txt")
-    #     os.remove("tmp_U.txt")
-    #     os.remove("tmp.txt")
-
+    def __del__(self):
+        os.system("rm tmp*")
+        
     def plot_(self):
         x = [[],[]] #tS, yexact
         i = 0
