@@ -50,8 +50,6 @@ class FTCSDirichlet:
                 self.U[i, k+1] = self.r*self.U[i-1, k] + (1-2*self.r+self.s)*self.U[i,k] + self.r*self.U[i+1,k] 
                 
         np.savetxt("tmp_U.txt", self.U)
-
-        self.T, self.X = np.meshgrid(self.tspan, self.xspan)
         
         dtS = int((self.xspan[-1] - self.xspan[0])/(self.D))
         tS = [self.xspan[0]+i*(self.D) for i in range(int(dtS)+1)]
