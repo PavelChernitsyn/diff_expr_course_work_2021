@@ -22,16 +22,6 @@ class Plotter(FigureCanvasTkAgg):
     def draw_lists(self, flag):
 
         self.axes.clear()
-        # x_list = [x for x in range(0, 100)]
-        # x_list = np.arange(1, 2, .01)
-        # y_list = [x for x in x_list]
-        # print (points[0])
-        # print (points[1])
-        # print (points[2])
-        # print (points[3])
-        # self.axes.plot(points[0], points[1], color='y')
-        # self.axes.plot(points[2], points[3], color='b')
-        # self.draw_idle()
     
         x = [[],[],[],[]]
         i = 0
@@ -46,10 +36,11 @@ class Plotter(FigureCanvasTkAgg):
                 x[i].append(float(elem))
             i+=1
         f.close()
-        # os.remove('tmp.txt')
 
         self.axes.plot(x[0], x[1], color='y')
         self.axes.plot(x[2], x[3], color='b')
+        self.axes.set_xlabel('Time')
+        self.axes.set_ylabel('Temperature')
         self.draw_idle()
 
 class MainApplication(ttk.Frame):
@@ -76,10 +67,31 @@ class MainApplication(ttk.Frame):
         input_frame = ttk.Frame(self)
         input_frame.grid(column=1, row=0, sticky='nsew')
 
-        # this binding doesn't update the plot
+        label_top_temp = ttk.Label(input_frame)
+        slider_top_temp = ttk.Scale(input_frame, from_ = 20, to_ = 200,
+                            command=lambda x:
+                            label_top_temp.config(text = "Top Temp = " + str(int(slider_top_temp.get()))))
+        slider_top_temp.set(100)
+        label_top_temp.config(text = "Top Temp = " + str(int(slider_top_temp.get())))
+
+        label_env_temp = ttk.Label(input_frame)
+        slider_env_temp = ttk.Scale(input_frame, from_ = 0, to_ = 180,
+                            command=lambda x:
+                            label_env_temp.config(text = "Enviroment Temp = " + str(int(slider_env_temp.get()))))
+        slider_env_temp.set(50)
+        label_env_temp.config(text = "Enviroment Temp = " + str(int(slider_env_temp.get())))
+
+        label_time = ttk.Label(input_frame)
+        slider_time = ttk.Scale(input_frame, from_ = 20, to_ = 1000,
+                            command=lambda x:
+                            label_time.config(text = "Time = " + str(int(slider_time.get()))))
+        slider_time.set(200)
+        label_time.config(text = "Time = " + str(int(slider_time.get())))
+
         button_BE = ttk.Button(input_frame, text='Backward Euler', 
                             command=lambda: 
-                            plot.draw_lists(backward_euler.BackwardEuler().execute()))
+                            plot.draw_lists(backward_euler.BackwardEuler(
+                                0.2, int(slider_time.get()), slider_top_temp.get(), slider_env_temp.get()).execute()))
         button_FE = ttk.Button(input_frame, text='Forward Euler', 
                             command=lambda: 
                             plot.draw_lists(forward_euler.ForwardEuler().execute()))
@@ -98,12 +110,13 @@ class MainApplication(ttk.Frame):
         button_RK.grid(column=0, row=9, columnspan=2, sticky='ew')
         button_H.grid(column=0, row=11, columnspan=2, sticky='ew')
         button_ADM.grid(column=0, row=13, columnspan=2, sticky='ew')
+        label_top_temp.grid(column=0, row=15, columnspan=2, sticky='ew')
+        slider_top_temp.grid(column=0, row=17, columnspan=2, sticky='ew')
+        label_env_temp.grid(column=0, row=19, columnspan=2, sticky='ew')
+        slider_env_temp.grid(column=0, row=21, columnspan=2, sticky='ew')
+        label_time.grid(column=0, row=23, columnspan=2, sticky='ew')
+        slider_time.grid(column=0, row=25, columnspan=2, sticky='ew')
 
     def __del__(self):
         os.remove('tmp.txt')
         pass
-
-
-# root = tk.Tk() 
-# MainApplication(root)
-# root.mainloop()
