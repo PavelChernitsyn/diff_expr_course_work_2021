@@ -5,10 +5,12 @@ import my_func as mf
 
 
 class Heun:
-    def __init__(self, _h = 0.2, _x = np.array([1.0, 200.0]), _yinit = np.array([80.0])):
+    def __init__(self, _h = 0.2, _x = 200, _y0 = 100, env_temp_ = 50):
         self.h = _h
-        self.x = _x
-        self.y0 = np.array([80.0])
+        self.x = np.array([0.0, _x])
+        self.y0 = np.array([_y0])
+        self.start_temp = _y0
+        self.env_temp = env_temp_
         self.f = open('tmp.txt', 'w')
     
     def __del__(self):
@@ -28,13 +30,13 @@ class Heun:
         y_res = np.append(y_res, y)
 
         for i in range(x_len):
-            y0prime = mf.myFunc(y)
+            y0prime = mf.myFunc(y, self.env_temp)
 
             k1 = y0prime * h
 
             ypredictor = y + k1
 
-            y1prime = mf.myFunc(ypredictor)
+            y1prime = mf.myFunc(ypredictor, self.env_temp)
 
             for j in range(y_len):
                 y[j] = y[j] + (h/2)*y0prime[j] + (h/2)*y1prime[j]
@@ -55,13 +57,13 @@ class Heun:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
 
-        t = np.arange(0, 200, 1)
+        t = np.arange(0, self.x[-1], 1)
         for index in t:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
 
         for i in t:
-            y_math_res = 40 + 40 * np.e**(-(np.log(2) * i/20))
+            y_math_res = self.env_temp + (self.start_temp - self.env_temp) * np.e**(-(np.log(2) * i/25))
             self.f.write(str(y_math_res) + ' ')
         self.f.write('\n')
 

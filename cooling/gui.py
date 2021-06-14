@@ -94,16 +94,14 @@ class MainApplication(ttk.Frame):
         button_BE = ttk.Button(input_frame, text='Backward Euler', command = self.button_BE_clicked)
                             
         button_FE = ttk.Button(input_frame, text='Forward Euler', command = self.button_FE_clicked)
+
+        button_RK = ttk.Button(input_frame, text='Runge Kutt', command = self.button_RK_clicked)
         
-        button_RK = ttk.Button(input_frame, text='Runge Kutt', 
-                            command=lambda: 
-                            self.plot.draw_lists(runge_kutta.Runge_Kutt().execute()))
-        button_H = ttk.Button(input_frame, text='Heun', 
-                            command=lambda: 
-                            self.plot.draw_lists(heun.Heun().execute()))
-        button_ADM = ttk.Button(input_frame, text='Adams-Bashforth-Moulton', 
-                            command=lambda: 
-                            self.plot.draw_lists(adams_bashforth_moulton.ABM().execute()))
+        button_H = ttk.Button(input_frame, text='Heun', command = self.button_H_clicked)
+        
+        button_ADM = ttk.Button(input_frame, text='Adams-Bashforth-Moulton', command = self.button_ADM_clicked)
+
+        button_discard_param = ttk.Button(input_frame, text='Discard params', command = self.button_discard_param_clicked)
                             
         button_BE.grid(column=0, row=0, columnspan=2, sticky='ew')
         button_FE.grid(column=0, row=1, columnspan=2, sticky='ew')
@@ -116,6 +114,7 @@ class MainApplication(ttk.Frame):
         self.slider_env_temp.grid(column=0, row=8, columnspan=2, sticky='ew')
         label_time.grid(column=0, row=9, columnspan=2, sticky='ew')
         self.slider_time.grid(column=0, row=10, columnspan=2, sticky='ew')
+        button_discard_param.grid(column=0, row=11, columnspan=2, sticky='ew')
         self.label_err_msg.grid(column=0, row=12, columnspan=2, sticky='ew')
 
     def button_BE_clicked(self):
@@ -132,29 +131,35 @@ class MainApplication(ttk.Frame):
 
     def button_RK_clicked(self):
         if (self.check_sliders()):
-            self.plot.draw_lists(backward_euler.BackwardEuler(
+            self.plot.draw_lists(runge_kutta.Runge_Kutt(
                 0.2, int(self.slider_time.get()), self.slider_top_temp.get(), self.slider_env_temp.get()
                 ).execute())
 
     def button_H_clicked(self):
         if (self.check_sliders()):
-            self.plot.draw_lists(backward_euler.BackwardEuler(
+            self.plot.draw_lists(heun.Heun(
                 0.2, int(self.slider_time.get()), self.slider_top_temp.get(), self.slider_env_temp.get()
                 ).execute())
 
     def button_ADM_clicked(self):
         if (self.check_sliders()):
-            self.plot.draw_lists(backward_euler.BackwardEuler(
+            self.plot.draw_lists(adams_bashforth_moulton.ABM(
                 0.2, int(self.slider_time.get()), self.slider_top_temp.get(), self.slider_env_temp.get()
                 ).execute())
+
+    def button_discard_param_clicked(self):
+        self.slider_env_temp.set(50)
+        self.slider_top_temp.set(100)
+        self.slider_time.set(200)
+        self.check_sliders()
 
     def check_sliders(self):
         # print("hi")
         if (self.slider_top_temp.get() <= self.slider_env_temp.get()):
-            self.label_err_msg.config(text = "\n\nERROR!\nTop Temp <= Env Temp")
+            self.label_err_msg.config(text = "\n\nStatus: ERROR!\nTop Temp <= Env Temp")
             return False
         else:
-            self.label_err_msg.config(text = "")
+            self.label_err_msg.config(text = "\n\nStatus: DONE!")
             return True
     
     def __del__(self):
