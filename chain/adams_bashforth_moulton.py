@@ -16,7 +16,7 @@ class ABM:
         pass
 
     def RungeKutta4thOrder(self, x):
-        x_len = int((3 - 0)/self.h)
+        appr = int((3 - 0)/self.h)
 
         x = 0
         y = 0.1 * 1 / (1 + 0.1) + 50/1000
@@ -27,22 +27,11 @@ class ABM:
         y_res = np.empty((0))
         y_res = np.append(y_res, y)
 
-        for i in range(x_len):
-            k1 = mf.myFunc(x)
-
-            yp2 = x + k1*(self.h/2)
-
-            k2 = mf.myFunc(yp2)
-
-            yp3 = x + k2*(self.h/2)
-
-            k3 = mf.myFunc(yp3)
-
-            yp4 = x + k3*self.h
-
-            k4 = mf.myFunc(yp4)
-
-            y = y + (self.h/6)*(k1 + 2*k2 + 2*k3 + k4)
+        for i in range(appr):
+            yp2 = x + mf.myFunc(x)*(self.h/2)
+            yp3 = x + mf.myFunc(yp2)*(self.h/2)
+            yp4 = x + mf.myFunc(yp3)*self.h
+            y = y + (self.h/6)*(mf.myFunc(x) + 2*mf.myFunc(yp2) + 2*mf.myFunc(yp3) + mf.myFunc(yp4))
 
             if (y > 1):
                 y = 1

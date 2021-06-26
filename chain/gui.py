@@ -79,7 +79,7 @@ class MainApplication(ttk.Frame):
         self.slider_epsilon = ttk.Scale(input_frame, from_ = 1, to_ = 5000,
                             command=lambda x:
                             label_epsilon.config(text = "Epsilon = " + str(int(self.slider_epsilon.get())) + "mm"))
-        self.slider_epsilon.set(50)
+        self.slider_epsilon.set(25)
         label_epsilon.config(text = "Epsilon = " + str(int(self.slider_epsilon.get())) + "mm")
 
         label_coef = ttk.Label(input_frame)
@@ -89,6 +89,14 @@ class MainApplication(ttk.Frame):
                             str("{0:.1f}".format(self.slider_coef.get()))))
         self.slider_coef.set(0.1)
         label_coef.config(text = "Coefficient of friction = " + str("{0:.1f}".format(self.slider_coef.get())))
+
+        label_time = ttk.Label(input_frame)
+        self.slider_time = ttk.Scale(input_frame, from_ = 0.1, to_ = 10,
+                            command=lambda x:
+                            label_time.config(text = "Time = " + 
+                            str("{0:.1f}".format(self.slider_time.get())) + "sec"))
+        self.slider_time.set(3)
+        label_time.config(text = "Time = " + str(int(self.slider_time.get())) + "sec")
 
         self.label_err_msg = ttk.Label(input_frame)
         self.label_err_msg.config(text = "")
@@ -116,12 +124,15 @@ class MainApplication(ttk.Frame):
         self.slider_epsilon.grid(column=0, row=8, columnspan=2, sticky='ew')
         label_coef.grid(column=0, row=9, columnspan=2, sticky='ew')
         self.slider_coef.grid(column=0, row=10, columnspan=2, sticky='ew')
-        button_discard_param.grid(column=0, row=11, columnspan=2, sticky='ew')
-        self.label_err_msg.grid(column=0, row=12, columnspan=2, sticky='ew')
+        label_time.grid(column=0, row=11, columnspan=2, sticky='ew')
+        self.slider_time.grid(column=0, row=12, columnspan=2, sticky='ew')
+        button_discard_param.grid(column=0, row=13, columnspan=2, sticky='ew')
+        self.label_err_msg.grid(column=0, row=14, columnspan=2, sticky='ew')
 
     def button_BE_clicked(self):
         self.plot.draw_lists(backward_euler.BackwardEuler(
-            # 0.2, self.slider_coef.get(), self.slider_chain_lenght.get(), self.slider_epsilon.get()
+            0.1, self.slider_coef.get(), self.slider_chain_lenght.get(), 
+            self.slider_epsilon.get(), self.slider_time.get()
             ).execute())
 
     def button_FE_clicked(self):
