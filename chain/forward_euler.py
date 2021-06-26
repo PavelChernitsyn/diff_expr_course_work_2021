@@ -48,6 +48,11 @@ class ForwardEuler:
             self.f.write(str(ys[index]) + ' ')
         self.f.write('\n')
 
+        #Глобальная ошибка в точке t = 0.5
+        y_res = ys[int(0.5 / self.h)]
+        y_res_an = T = 2 * self.eps/2000 * np.exp(np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.5) + 2 * self.eps/2000 * np.exp(-np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.5) + self.coef * self.chain_len / (1 + self.coef)
+        global_err = y_res - y_res_an
+
         t = np.arange(0, self.time, self.coef)
 
         for index in t:
@@ -61,4 +66,4 @@ class ForwardEuler:
             self.f.write(str(T) + ' ')
         self.f.write('\n')
 
-        return 0
+        return global_err

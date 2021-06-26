@@ -19,7 +19,7 @@ class Plotter(FigureCanvasTkAgg):
         self.axes = self.figure.add_subplot(111)
         self.get_tk_widget().grid(column=0, row=0, sticky='nsew')
 
-    def draw_lists(self, flag):
+    def draw_lists(self):
 
         self.axes.clear()
     
@@ -68,7 +68,7 @@ class MainApplication(ttk.Frame):
         input_frame.grid(column=1, row=0, sticky='nsew')
 
         label_chain_lenght = ttk.Label(input_frame)
-        self.slider_chain_lenght = ttk.Scale(input_frame, from_ = 0, to_ = 5,
+        self.slider_chain_lenght = ttk.Scale(input_frame, from_ = 0.1, to_ = 1,
                             command=lambda x:
                             label_chain_lenght.config(text = "Chain lenght = " + 
                             str("{0:.1f}".format(self.slider_chain_lenght.get())) + "m"))
@@ -76,7 +76,7 @@ class MainApplication(ttk.Frame):
         label_chain_lenght.config(text = "Chain lenght = " + str("{0:.1f}".format(self.slider_chain_lenght.get())) + "m")
 
         label_epsilon = ttk.Label(input_frame)
-        self.slider_epsilon = ttk.Scale(input_frame, from_ = 1, to_ = 500,
+        self.slider_epsilon = ttk.Scale(input_frame, from_ = 1, to_ = 100,
                             command=lambda x:
                             label_epsilon.config(text = "Epsilon = " + str(int(self.slider_epsilon.get())) + "mm"))
         self.slider_epsilon.set(25)
@@ -130,34 +130,44 @@ class MainApplication(ttk.Frame):
         self.label_err_msg.grid(column=0, row=14, columnspan=2, sticky='ew')
 
     def button_BE_clicked(self):
-        self.plot.draw_lists(backward_euler.BackwardEuler(
+        err = backward_euler.BackwardEuler(
             0.01, self.slider_coef.get(), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
-            ).execute())
+            ).execute() 
+        self.plot.draw_lists()
+        self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_FE_clicked(self):
-        self.plot.draw_lists(forward_euler.ForwardEuler(
+        err = forward_euler.ForwardEuler(
             0.01, self.slider_coef.get(), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
-            ).execute())
+            ).execute()
+        self.plot.draw_lists()
+        self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_RK_clicked(self):
-        self.plot.draw_lists(runge_kutta.Runge_Kutt(
+        err = runge_kutta.Runge_Kutt(
             0.01, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
-            ).execute())
+            ).execute()
+        self.plot.draw_lists()
+        self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_H_clicked(self):
-        self.plot.draw_lists(heun.Heun(
+        err = heun.Heun(
             0.01, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
-            ).execute())
+            ).execute()
+        self.plot.draw_lists()
+        self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_ADM_clicked(self):
-        self.plot.draw_lists(adams_bashforth_moulton.ABM(
+        err = adams_bashforth_moulton.ABM(
             0.01, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
-            ).execute())
+            ).execute()
+        self.plot.draw_lists()
+        self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_discard_param_clicked(self):
         self.slider_epsilon.set(2 * self.eps)
