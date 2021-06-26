@@ -76,7 +76,7 @@ class MainApplication(ttk.Frame):
         label_chain_lenght.config(text = "Chain lenght = " + str("{0:.1f}".format(self.slider_chain_lenght.get())) + "m")
 
         label_epsilon = ttk.Label(input_frame)
-        self.slider_epsilon = ttk.Scale(input_frame, from_ = 1, to_ = 5000,
+        self.slider_epsilon = ttk.Scale(input_frame, from_ = 1, to_ = 500,
                             command=lambda x:
                             label_epsilon.config(text = "Epsilon = " + str(int(self.slider_epsilon.get())) + "mm"))
         self.slider_epsilon.set(25)
@@ -131,32 +131,36 @@ class MainApplication(ttk.Frame):
 
     def button_BE_clicked(self):
         self.plot.draw_lists(backward_euler.BackwardEuler(
-            0.1, self.slider_coef.get(), self.slider_chain_lenght.get(), 
+            0.01, self.slider_coef.get(), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute())
 
     def button_FE_clicked(self):
         self.plot.draw_lists(forward_euler.ForwardEuler(
-            # 0.2, self.slider_coef.get(), self.slider_chain_lenght.get(), self.slider_epsilon.get()
+            0.01, self.slider_coef.get(), self.slider_chain_lenght.get(), 
+            self.slider_epsilon.get(), self.slider_time.get()
             ).execute())
 
     def button_RK_clicked(self):
         self.plot.draw_lists(runge_kutta.Runge_Kutt(
-            # 0.2, int(self.slider_coef.get()), self.slider_chain_lenght.get(), self.slider_epsilon.get()
+            0.01, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            self.slider_epsilon.get(), self.slider_time.get()
             ).execute())
 
     def button_H_clicked(self):
         self.plot.draw_lists(heun.Heun(
-            # 0.2, int(self.slider_coef.get()), self.slider_chain_lenght.get(), self.slider_epsilon.get()
+            0.01, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            self.slider_epsilon.get(), self.slider_time.get()
             ).execute())
 
     def button_ADM_clicked(self):
         self.plot.draw_lists(adams_bashforth_moulton.ABM(
-            # 0.2, int(self.slider_coef.get()), self.slider_chain_lenght.get(), self.slider_epsilon.get()
+            0.01, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            self.slider_epsilon.get(), self.slider_time.get()
             ).execute())
 
     def button_discard_param_clicked(self):
-        self.slider_epsilon.set(50)
+        self.slider_epsilon.set(2 * self.eps)
         self.slider_chain_lenght.set(100)
         self.slider_coef.set(200)
         self.check_sliders()

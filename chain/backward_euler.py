@@ -27,7 +27,7 @@ class BackwardEuler:
         self.f.write(str(x) + ' ')
 
         for i in range(appr):
-            F_x_t = mf.myFunc(x)/(1+self.h)
+            F_x_t = mf.myFunc(x, self.coef, self.chain_len)/(1+self.h)
 
             j += 1
             y[j] = y[j-1] + self.h*F_x_t

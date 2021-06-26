@@ -3,12 +3,13 @@ import matplotlib.pyplot as plt
 import my_func as mf
 
 class ABM:
-    def __init__(self, _h = 0.01, _coef = 0.1, _chain_len = 1, _eps = 25, _x = 200):
+    def __init__(self, _h = 0.01, _coef = 0.1, _chain_len = 1, _eps = 25, time_ = 3):
         self.h = _h
         self.coef = _coef
         self.chain_len = _chain_len
         self.eps = _eps
-        self.x = np.array([0.0, _x])
+        self.x = np.array([0.0])
+        self.time = time_
         self.f = open('tmp.txt', 'w')
 
     def __del__(self):
@@ -16,10 +17,10 @@ class ABM:
         pass
 
     def RungeKutta4thOrder(self, x):
-        appr = int((3 - 0)/self.h)
+        appr = int((self.time - 0)/self.h)
 
         x = 0
-        y = 0.1 * 1 / (1 + 0.1) + 50/1000
+        y = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
 
         xsol = np.empty((0))
         xsol = np.append(xsol, x)
@@ -28,10 +29,10 @@ class ABM:
         y_res = np.append(y_res, y)
 
         for i in range(appr):
-            yp2 = x + mf.myFunc(x)*(self.h/2)
-            yp3 = x + mf.myFunc(yp2)*(self.h/2)
-            yp4 = x + mf.myFunc(yp3)*self.h
-            y = y + (self.h/6)*(mf.myFunc(x) + 2*mf.myFunc(yp2) + 2*mf.myFunc(yp3) + mf.myFunc(yp4))
+            yp2 = x + mf.myFunc(x, self.coef, self.chain_len)*(self.h/2)
+            yp3 = x + mf.myFunc(yp2, self.coef, self.chain_len)*(self.h/2)
+            yp4 = x + mf.myFunc(yp3, self.coef, self.chain_len)*self.h
+            y = y + (self.h/6)*(mf.myFunc(x, self.coef, self.chain_len) + 2*mf.myFunc(yp2, self.coef, self.chain_len) + 2*mf.myFunc(yp3, self.coef, self.chain_len) + mf.myFunc(yp4, self.coef, self.chain_len))
 
             if (y > 1):
                 y = 1
@@ -45,7 +46,7 @@ class ABM:
 
 
     def ABM4thOrder(self):
-        dx = int((3 - 0) / self.h)
+        dx = int((self.time - 0) / self.h)
 
         xrk = [self.x[0] + k * self.h for k in range(dx + 1)]
 
@@ -63,13 +64,13 @@ class ABM:
         # y_res = np.append(y_res, y)
 
         for i in range(3, dx):
-            y0prime = mf.myFunc(y[i])
-            y1prime = mf.myFunc(y[i - 1])
-            y2prime = mf.myFunc(y[i - 2])
-            y3prime = mf.myFunc(y[i - 3])
+            y0prime = mf.myFunc(y[i], self.coef, self.chain_len)
+            y1prime = mf.myFunc(y[i - 1], self.coef, self.chain_len)
+            y2prime = mf.myFunc(y[i - 2], self.coef, self.chain_len)
+            y3prime = mf.myFunc(y[i - 3], self.coef, self.chain_len)
 
             ypredictor = y[i] + (self.h/24)*(55*y0prime - 59*y1prime + 37*y2prime - 9*y3prime)
-            ypp = mf.myFunc(ypredictor)
+            ypp = mf.myFunc(ypredictor, self.coef, self.chain_len)
 
             yn = y[i] + (self.h/24)*(9*ypp + 19*y0prime - 5*y1prime + y2prime)
 
@@ -97,13 +98,13 @@ class ABM:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
 
-        t = np.arange(0, 3, 0.1)
+        t = np.arange(0, self.time, self.h)
         for index in t:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
 
         for i in t:
-            T = 50/2000 * np.exp(np.sqrt((1 + 0.1) * 9.8 / 1) * i) + 50/2000 * np.exp(-np.sqrt((1 + 0.1) * 9.8 / 1) * i) + 0.1 * 1 / (1 + 0.1)
+            T = 2 * self.eps/2000 * np.exp(np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * i) + 2 * self.eps/2000 * np.exp(-np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * i) + self.coef * self.chain_len / (1 + self.coef)
             if (T > 1):
                 T = 1
             self.f.write(str(T) + ' ')
