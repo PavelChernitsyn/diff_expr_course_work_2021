@@ -30,16 +30,16 @@ class Runge_Kutt:
 
         for i in range(appr):
             a1, v1 = mf.myFunc(x, y[j], v, self.coef, self.chain_len)
-            yp2 = x + (v1 + (a1 * self.h/5) / 2)*(self.h/5)
-            a2, v2 = mf.myFunc(yp2, y[j], v1, self.coef, self.chain_len)
-            yp3 = x + (v1 + (3 * a1 * self.h/40) / 2)*(3*self.h/40) + (v2 + (9 * a2 * self.h/40) / 2)*(9*self.h/40)
-            a3, v3 = mf.myFunc(yp3, y[j], v2, self.coef, self.chain_len)
-            yp4 = x + (v1 + (3 * a1 * self.h/10) / 2)*(3*self.h/10) - (v2 + (9 * a2 * self.h/10) / 2)*(9*self.h/10) + (v3 + (6 * a3 * self.h/5) / 2)*(6*self.h/5)
-            a4, v4 = mf.myFunc(yp4, y[j], v3, self.coef, self.chain_len)
-            yp5 = x - (v1 + (11 * a1 * self.h/54) / 2)*(11*self.h/54) + (v2 + (5 * a2 * self.h/2) / 2)*(5*self.h/2) - (v3 + (70 * a3 * self.h/27) / 2)*(70*self.h/27) + (v4 + (35 * a4 * self.h/27) / 2)*(35*self.h/27)
-            a5, v5 = mf.myFunc(yp5, y[j], v4, self.coef, self.chain_len)
-            yp6 = x + (v1 + (1631 * a1 * self.h/55296) / 2)*(1631*self.h/55296) + (v2 + (175 * a2 * self.h/512) / 2)*(175*self.h/512) + (v3 + (575 * a3 * self.h/13824) / 2)*(575*self.h/13824) + (v4 + (44275 * a4 * self.h/110592) / 2)*(44275*self.h/110592) + (v5 + (253 * a5 * self.h/4096) / 2)*(253*self.h/4096)
-            a6, v6 = mf.myFunc(yp6, y[j], v5, self.coef, self.chain_len)
+            yp2 = y[j] + (v1 + (a1 * self.h/5) / 2)*(self.h/5)
+            a2, v2 = mf.myFunc(x, yp2, v1, self.coef, self.chain_len)
+            yp3 = y[j] + (v1 + (3 * a1 * self.h/40) / 2)*(3*self.h/40) + (v2 + (9 * a2 * self.h/40) / 2)*(9*self.h/40)
+            a3, v3 = mf.myFunc(x, yp3, v2, self.coef, self.chain_len)
+            yp4 = y[j] + (v1 + (3 * a1 * self.h/10) / 2)*(3*self.h/10) - (v2 + (9 * a2 * self.h/10) / 2)*(9*self.h/10) + (v3 + (6 * a3 * self.h/5) / 2)*(6*self.h/5)
+            a4, v4 = mf.myFunc(x, yp4, v3, self.coef, self.chain_len)
+            yp5 = y[j] - (v1 + (11 * a1 * self.h/54) / 2)*(11*self.h/54) + (v2 + (5 * a2 * self.h/2) / 2)*(5*self.h/2) - (v3 + (70 * a3 * self.h/27) / 2)*(70*self.h/27) + (v4 + (35 * a4 * self.h/27) / 2)*(35*self.h/27)
+            a5, v5 = mf.myFunc(x, yp5, v4, self.coef, self.chain_len)
+            yp6 = y[j] + (v1 + (1631 * a1 * self.h/55296) / 2)*(1631*self.h/55296) + (v2 + (175 * a2 * self.h/512) / 2)*(175*self.h/512) + (v3 + (575 * a3 * self.h/13824) / 2)*(575*self.h/13824) + (v4 + (44275 * a4 * self.h/110592) / 2)*(44275*self.h/110592) + (v5 + (253 * a5 * self.h/4096) / 2)*(253*self.h/4096)
+            a6, v6 = mf.myFunc(x, yp6, v5, self.coef, self.chain_len)
 
             j += 1
             y[j] = y[j-1] + self.h*(37*(v1 + (a1 * self.h) / 2)/378 + 22 * self.eps*(v3 + (a3 * self.h) / 2)/621 + 125*(v4 + (a4 * self.h) / 2)/594 + 512*(v6 + (a6 * self.h) / 2)/1771)
