@@ -3,7 +3,7 @@ import numpy as np
 import my_func as mf
 
 class BackwardEuler:
-    def __init__(self, _h = 0.01, _coef = 0.1, _chain_len = 1, _eps = 25, time_ = 3):
+    def __init__(self, _h = 0.001, _coef = 0.1, _chain_len = 1, _eps = 25, time_ = 3):
         self.h = _h
         self.coef = _coef
         self.chain_len = _chain_len
@@ -20,6 +20,8 @@ class BackwardEuler:
 
         j = 0
 
+        v = 0
+
         x = 0
         y = {}
         y[j] = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
@@ -27,12 +29,11 @@ class BackwardEuler:
         self.f.write(str(x) + ' ')
 
         for i in range(appr):
-            F_x_t = mf.myFunc(x, self.coef, self.chain_len)/(1+self.h)
+            a, v = mf.myFunc(x, y[j], v, self.coef, self.chain_len)
+ 
+            y[j+1] = y[j] + (v + (a * self.h) / 2)* self.h
 
             j += 1
-            y[j] = y[j-1] + self.h*F_x_t
-            print(y[j])
-
             x += self.h
             if (y[j] > 1):
                 y[j] = 1
@@ -49,8 +50,8 @@ class BackwardEuler:
         self.f.write('\n')
 
         #Глобальная ошибка в точке t = 0.5
-        y_res = ys[int(0.5 / self.h)]
-        y_res_an = T = 2 * self.eps/2000 * np.exp(np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.5) + 2 * self.eps/2000 * np.exp(-np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.5) + self.coef * self.chain_len / (1 + self.coef)
+        y_res = ys[int(0.3 / self.h)]
+        y_res_an = 2 * self.eps/2000 * np.exp(np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.3) + 2 * self.eps/2000 * np.exp(-np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.3) + self.coef * self.chain_len / (1 + self.coef)
         global_err = y_res - y_res_an
 
 

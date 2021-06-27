@@ -68,7 +68,7 @@ class MainApplication(ttk.Frame):
         input_frame.grid(column=1, row=0, sticky='nsew')
 
         label_chain_lenght = ttk.Label(input_frame)
-        self.slider_chain_lenght = ttk.Scale(input_frame, from_ = 0.1, to_ = 1,
+        self.slider_chain_lenght = ttk.Scale(input_frame, from_ = 0.1, to_ = 5,
                             command=lambda x:
                             label_chain_lenght.config(text = "Chain lenght = " + 
                             str("{0:.1f}".format(self.slider_chain_lenght.get())) + "m"))
@@ -131,7 +131,7 @@ class MainApplication(ttk.Frame):
 
     def button_BE_clicked(self):
         err = backward_euler.BackwardEuler(
-            0.01, self.slider_coef.get(), self.slider_chain_lenght.get(), 
+            0.001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute() 
         self.plot.draw_lists()
@@ -139,7 +139,7 @@ class MainApplication(ttk.Frame):
 
     def button_FE_clicked(self):
         err = forward_euler.ForwardEuler(
-            0.01, self.slider_coef.get(), self.slider_chain_lenght.get(), 
+            0.001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
         self.plot.draw_lists()
@@ -147,7 +147,7 @@ class MainApplication(ttk.Frame):
 
     def button_RK_clicked(self):
         err = runge_kutta.Runge_Kutt(
-            0.01, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            0.001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
         self.plot.draw_lists()
@@ -155,7 +155,7 @@ class MainApplication(ttk.Frame):
 
     def button_H_clicked(self):
         err = heun.Heun(
-            0.01, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            0.001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
         self.plot.draw_lists()
@@ -163,7 +163,7 @@ class MainApplication(ttk.Frame):
 
     def button_ADM_clicked(self):
         err = adams_bashforth_moulton.ABM(
-            0.01, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            0.001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
         self.plot.draw_lists()

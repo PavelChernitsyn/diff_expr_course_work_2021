@@ -22,6 +22,8 @@ class Heun:
         
         j = 0
 
+        v = 0
+
         x = 0
         y = {}
         y[j] = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
@@ -29,8 +31,13 @@ class Heun:
         self.f.write(str(x) + ' ')
 
         for i in range(appr):
+            a1, v1 = mf.myFunc(x, y[j], v, self.coef, self.chain_len)
+            a2, v2 = mf.myFunc(x + (v1 * self.h + (a1 * self.h ** 2) / 2) * self.h, y[j], v1, self.coef, self.chain_len)
+
             j += 1
-            y[j] = y[j-1] + (self.h/2)*mf.myFunc(x, self.coef, self.chain_len) + (self.h/2)*mf.myFunc(x + mf.myFunc(x, self.coef, self.chain_len) * self.h, self.coef, self.chain_len)
+            y[j] = y[j-1] + (v1 * self.h / 2 + (a1 * (self.h/2) ** 2) / 2) + (v2 * self.h/2 + (a2 * (self.h/2) ** 2) / 2)
+
+            v = v1
             print(y[j])
             if (y[j] > 1):
                 y[j] = 1

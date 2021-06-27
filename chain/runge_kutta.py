@@ -4,7 +4,7 @@ import numpy as np
 import my_func as mf
 
 class Runge_Kutt:
-    def __init__(self, _h = 0.01, _coef = 0.1, _chain_len = 1, _eps = 25, time_ = 3):
+    def __init__(self, _h = 0.001, _coef = 0.1, _chain_len = 1, _eps = 25, time_ = 3):
         self.h = _h
         self.coef = _coef
         self.chain_len = _chain_len
@@ -21,6 +21,7 @@ class Runge_Kutt:
         
         j = 0
 
+        v = 0
         x = 0
         y = {}
         y[j] = self.coef * 1 / (1 + self.coef) + 2 * self.eps/1000
@@ -28,15 +29,22 @@ class Runge_Kutt:
         self.f.write(str(x) + ' ')
 
         for i in range(appr):
-            yp2 = x + mf.myFunc(x, self.coef, self.chain_len)*(self.h/5)
-            yp3 = x + mf.myFunc(x, self.coef, self.chain_len)*(3*self.h/40) + mf.myFunc(yp2, self.coef, self.chain_len)*(9*self.h/40)
-            yp4 = x + mf.myFunc(x, self.coef, self.chain_len)*(3*self.h/10) - mf.myFunc(yp2, self.coef, self.chain_len)*(9*self.h/10) + mf.myFunc(yp3, self.coef, self.chain_len)*(6*self.h/5)
-            yp5 = x - mf.myFunc(x, self.coef, self.chain_len)*(11*self.h/54) + mf.myFunc(yp2, self.coef, self.chain_len)*(5*self.h/2) - mf.myFunc(yp3, self.coef, self.chain_len)*(70*self.h/27) + mf.myFunc(yp4, self.coef, self.chain_len)*(35*self.h/27)
-            yp6 = x + mf.myFunc(x, self.coef, self.chain_len)*(1631*self.h/55296) + mf.myFunc(yp2, self.coef, self.chain_len)*(175*self.h/512) + mf.myFunc(yp3, self.coef, self.chain_len)*(575*self.h/13824) + mf.myFunc(yp4, self.coef, self.chain_len)*(44275*self.h/110592) + mf.myFunc(yp5, self.coef, self.chain_len)*(253*self.h/4096)
-            
-            j += 1
-            y[j] = y[j-1] + self.h*(37*mf.myFunc(x, self.coef, self.chain_len)/378 + 22 * self.eps*mf.myFunc(yp3, self.coef, self.chain_len)/621 + 125*mf.myFunc(yp4, self.coef, self.chain_len)/594 + 512*mf.myFunc(yp6, self.coef, self.chain_len)/1771)
+            a1, v1 = mf.myFunc(x, y[j], v, self.coef, self.chain_len)
+            yp2 = x + (v1 + (a1 * self.h/5) / 2)*(self.h/5)
+            a2, v2 = mf.myFunc(yp2, y[j], v1, self.coef, self.chain_len)
+            yp3 = x + (v1 + (3 * a1 * self.h/40) / 2)*(3*self.h/40) + (v2 + (9 * a2 * self.h/40) / 2)*(9*self.h/40)
+            a3, v3 = mf.myFunc(yp3, y[j], v2, self.coef, self.chain_len)
+            yp4 = x + (v1 + (3 * a1 * self.h/10) / 2)*(3*self.h/10) - (v2 + (9 * a2 * self.h/10) / 2)*(9*self.h/10) + (v3 + (6 * a3 * self.h/5) / 2)*(6*self.h/5)
+            a4, v4 = mf.myFunc(yp4, y[j], v3, self.coef, self.chain_len)
+            yp5 = x - (v1 + (11 * a1 * self.h/54) / 2)*(11*self.h/54) + (v2 + (5 * a2 * self.h/2) / 2)*(5*self.h/2) - (v3 + (70 * a3 * self.h/27) / 2)*(70*self.h/27) + (v4 + (35 * a4 * self.h/27) / 2)*(35*self.h/27)
+            a5, v5 = mf.myFunc(yp5, y[j], v4, self.coef, self.chain_len)
+            yp6 = x + (v1 + (1631 * a1 * self.h/55296) / 2)*(1631*self.h/55296) + (v2 + (175 * a2 * self.h/512) / 2)*(175*self.h/512) + (v3 + (575 * a3 * self.h/13824) / 2)*(575*self.h/13824) + (v4 + (44275 * a4 * self.h/110592) / 2)*(44275*self.h/110592) + (v5 + (253 * a5 * self.h/4096) / 2)*(253*self.h/4096)
+            a6, v6 = mf.myFunc(yp6, y[j], v5, self.coef, self.chain_len)
 
+            j += 1
+            y[j] = y[j-1] + self.h*(37*(v1 + (a1 * self.h) / 2)/378 + 22 * self.eps*(v3 + (a3 * self.h) / 2)/621 + 125*(v4 + (a4 * self.h) / 2)/594 + 512*(v6 + (a6 * self.h) / 2)/1771)
+
+            v = v1
             x += self.h
             if (y[j] > 1):
                 y[j] = 1

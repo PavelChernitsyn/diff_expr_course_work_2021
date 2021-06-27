@@ -3,7 +3,7 @@ import numpy as np
 import my_func as mf
 
 class ForwardEuler:
-    def __init__(self, _h = 0.01, _coef = 0.1, _chain_len = 1, _eps = 25, time_ = 3):
+    def __init__(self, _h = 0.001, _coef = 0.1, _chain_len = 1, _eps = 25, time_ = 3):
         self.h = _h
         self.coef = _coef
         self.chain_len = _chain_len
@@ -20,6 +20,8 @@ class ForwardEuler:
 
         j = 0
 
+        v = 0
+
         x = 0
         y = {}
         y[j] = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
@@ -27,10 +29,10 @@ class ForwardEuler:
         self.f.write(str(x) + ' ')
 
         for i in range(appr):
-            F_x_t = mf.myFunc(x, self.coef, self.chain_len)
+            a, v = mf.myFunc(x, y[j], v, self.coef, self.chain_len)
             
             j += 1
-            y[j] = y[j-1] + self.h*F_x_t
+            y[j] = y[j-1] + v * self.h + (a * self.h ** 2) / 2
             print (y[j])
                 
             x += self.h
