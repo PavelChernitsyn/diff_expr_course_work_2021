@@ -29,7 +29,7 @@ class ForwardEuler:
         self.f.write(str(x) + ' ')
 
         for i in range(appr):
-            a, v = mf.myFunc(x, y[j], v, self.coef, self.chain_len)
+            a, v = mf.myFunc(x, y[j], v, self.coef, self.chain_len, self.h)
             
             j += 1
             y[j] = y[j-1] + v * self.h + (a * self.h ** 2) / 2
