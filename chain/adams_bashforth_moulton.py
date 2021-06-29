@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import my_func as mf
 
 class ABM:
+
     def __init__(self, _h = 0.001, _coef = 0.1, _chain_len = 1, _eps = 25, time_ = 3):
         self.h = _h
         self.coef = _coef
@@ -20,6 +21,7 @@ class ABM:
         appr = int((self.time - 0)/self.h)
 
         v = 0
+  
         x = 0
         y = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
 
@@ -30,6 +32,7 @@ class ABM:
         y_res = np.append(y_res, y)
 
         for i in range(appr):
+
             a1, v1 = mf.myFunc(x, y, v, self.coef, self.chain_len, self.h)
             yp2 = y + (v1 + (a1 * self.h/2) / 2)*(self.h/2)
             a2, v2 = mf.myFunc(x, yp2, v1, self.coef, self.chain_len, self.h)
@@ -43,7 +46,9 @@ class ABM:
                 y = 1
 
             x = x + self.h
+
             v = v1
+
             xsol = np.append(xsol, x)
 
             y_res = np.append(y_res, y) 
@@ -64,6 +69,7 @@ class ABM:
         y = yy
         yn = yy[0]
         y_res = np.empty(0)
+
 
         V = 0
         xs = 0

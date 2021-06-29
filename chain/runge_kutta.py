@@ -29,6 +29,7 @@ class Runge_Kutt:
         self.f.write(str(x) + ' ')
 
         for i in range(appr):
+
             a1, v1 = mf.myFunc(x, y[j], v, self.coef, self.chain_len, self.h)
             yp2 = y[j] + (v1 + (a1 * self.h/5) / 2)*(self.h/5)
             a2, v2 = mf.myFunc(x + 1/5*self.h, yp2, v1, self.coef, self.chain_len, self.h)

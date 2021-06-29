@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def myFunc(x, y, v, mu, l, h):
     # x - время, y - длина свисающей части
     a = (1 + mu) * 9.8 * y / l - mu * 9.8

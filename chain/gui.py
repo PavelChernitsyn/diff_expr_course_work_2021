@@ -132,6 +132,7 @@ class MainApplication(ttk.Frame):
     def button_BE_clicked(self):
         err = backward_euler.BackwardEuler(
             0.1, self.slider_coef.get(), self.slider_chain_lenght.get(), 
+
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute() 
         self.plot.draw_lists()
@@ -140,6 +141,7 @@ class MainApplication(ttk.Frame):
     def button_FE_clicked(self):
         err = forward_euler.ForwardEuler(
             0.1, self.slider_coef.get(), self.slider_chain_lenght.get(), 
+
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
         self.plot.draw_lists()

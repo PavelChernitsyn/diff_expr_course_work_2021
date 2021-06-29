@@ -31,6 +31,7 @@ class Heun:
         self.f.write(str(x) + ' ')
 
         for i in range(appr):
+
             a1, v1 = mf.myFunc(x, y[j], v, self.coef, self.chain_len, self.h)
             a2, v2 = mf.myFunc(x + (v1 * self.h + (a1 * self.h ** 2) / 2) * self.h, y[j], v1, self.coef, self.chain_len, self.h)
 
