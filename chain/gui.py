@@ -131,7 +131,7 @@ class MainApplication(ttk.Frame):
 
     def button_BE_clicked(self):
         err = backward_euler.BackwardEuler(
-            0.1, self.slider_coef.get(), self.slider_chain_lenght.get(), 
+            0.001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute() 
@@ -140,7 +140,7 @@ class MainApplication(ttk.Frame):
 
     def button_FE_clicked(self):
         err = forward_euler.ForwardEuler(
-            0.1, self.slider_coef.get(), self.slider_chain_lenght.get(), 
+            0.001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
@@ -149,7 +149,7 @@ class MainApplication(ttk.Frame):
 
     def button_RK_clicked(self):
         err = runge_kutta.Runge_Kutt(
-            0.1, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            0.001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
         self.plot.draw_lists()
@@ -157,7 +157,7 @@ class MainApplication(ttk.Frame):
 
     def button_H_clicked(self):
         err = heun.Heun(
-            0.1, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            0.001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
         self.plot.draw_lists()
@@ -165,7 +165,7 @@ class MainApplication(ttk.Frame):
 
     def button_ADM_clicked(self):
         err = adams_bashforth_moulton.ABM(
-            0.1, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            0.001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
         self.plot.draw_lists()
