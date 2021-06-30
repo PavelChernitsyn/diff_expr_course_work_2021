@@ -83,10 +83,10 @@ class MainApplication(ttk.Frame):
         label_epsilon.config(text = "Epsilon = " + str(int(self.slider_epsilon.get())) + "mm")
 
         label_coef = ttk.Label(input_frame)
-        self.slider_coef = ttk.Scale(input_frame, from_ = 0, to_ = 2,
+        self.slider_coef = ttk.Scale(input_frame, from_ = 0, to_ = 0.3,
                             command=lambda x:
                             label_coef.config(text = "Coefficient of friction = " + 
-                            str("{0:.1f}".format(self.slider_coef.get()))))
+                            str("{0:.2f}".format(self.slider_coef.get()))))
         self.slider_coef.set(0.1)
         label_coef.config(text = "Coefficient of friction = " + str("{0:.1f}".format(self.slider_coef.get())))
 
