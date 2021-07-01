@@ -1,6 +1,7 @@
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-from tkinter import ttk 
+from tkinter import ttk
+import matplotlib.pyplot as plt
 import tkinter as tk
 import numpy as np
 import backward_euler
@@ -19,7 +20,7 @@ class Plotter(FigureCanvasTkAgg):
         self.axes = self.figure.add_subplot(111)
         self.get_tk_widget().grid(column=0, row=0, sticky='nsew')
 
-    def draw_lists(self):
+    def draw_lists(self, chain_len, err_msg):
 
         self.axes.clear()
     
@@ -42,6 +43,25 @@ class Plotter(FigureCanvasTkAgg):
         self.axes.set_xlabel('T, sec')
         self.axes.set_ylabel('L, mm')
         self.draw_idle()
+
+        # print(len(x[0]), len(x[1]), len(x[2]), len(x[3]))
+
+        #Error
+        err = [[], []]
+        counter = 0
+        mean_err = .0
+        for i in range(len(x[1])):
+            if (x[1][i] >= chain_len):
+                break
+            err[0].append(i)
+            err[1].append(x[1][i] - x[3][i])
+            mean_err += (x[1][i] - x[3][i])
+            counter += 1
+        mean_err /= counter
+        err_msg.config(text = "Err. = " + str("{0:.8f}".format(mean_err)))
+        
+        plt.plot(err[0], err[1], 'r')
+        plt.show()
 
 class MainApplication(ttk.Frame):
 
@@ -68,7 +88,7 @@ class MainApplication(ttk.Frame):
         input_frame.grid(column=1, row=0, sticky='nsew')
 
         label_chain_lenght = ttk.Label(input_frame)
-        self.slider_chain_lenght = ttk.Scale(input_frame, from_ = 0.1, to_ = 5,
+        self.slider_chain_lenght = ttk.Scale(input_frame, from_ = 0.1, to_ = 10,
                             command=lambda x:
                             label_chain_lenght.config(text = "Chain lenght = " + 
                             str("{0:.1f}".format(self.slider_chain_lenght.get())) + "m"))
@@ -131,45 +151,43 @@ class MainApplication(ttk.Frame):
 
     def button_BE_clicked(self):
         err = backward_euler.BackwardEuler(
-            0.001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
-
+            0.0001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute() 
-        self.plot.draw_lists()
-        self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
+        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)
+        # self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_FE_clicked(self):
         err = forward_euler.ForwardEuler(
-            0.001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
-
+            0.0001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
-        self.plot.draw_lists()
-        self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
+        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)
+        # self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_RK_clicked(self):
         err = runge_kutta.Runge_Kutt(
-            0.001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            0.0001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
-        self.plot.draw_lists()
-        self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
+        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)
+        # self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_H_clicked(self):
         err = heun.Heun(
-            0.001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            0.0001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
-        self.plot.draw_lists()
-        self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
+        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)
+        # self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_ADM_clicked(self):
         err = adams_bashforth_moulton.ABM(
-            0.001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            0.0001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
-        self.plot.draw_lists()
-        self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
+        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)
+        # self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_discard_param_clicked(self):
         self.slider_epsilon.set(2 * self.eps)

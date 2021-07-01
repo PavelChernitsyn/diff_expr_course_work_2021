@@ -32,16 +32,18 @@ class Heun:
 
         for i in range(appr):
 
-            a1, v1 = mf.myFunc(x, y[j], v, self.coef, self.chain_len, self.h)
-            a2, v2 = mf.myFunc(x + (v1 * self.h + (a1 * self.h ** 2) / 2) * self.h, y[j], v1, self.coef, self.chain_len, self.h)
+            a1, v1 = mf.myFunc(y[j], v, self.coef, self.chain_len)
+            v1 += a1 * self.h
+            a2, v2 = mf.myFunc(y[j], v1, self.coef, self.chain_len)
+            v2 += a2 * self.h
 
             j += 1
-            y[j] = y[j-1] + (v1 * self.h / 2 + (a1 * (self.h/2) ** 2) / 2) + (v2 * self.h/2 + (a2 * (self.h/2) ** 2) / 2)
+            y[j] = y[j-1] + (v1 + v2) * self.h / 2
 
             v = v1
             print(y[j])
-            if (y[j] > 1):
-                y[j] = 1
+            if (y[j] > self.chain_len):
+                y[j] = self.chain_len
 
             x += self.h
             self.f.write(str(x) + ' ')
@@ -55,21 +57,21 @@ class Heun:
             self.f.write(str(ys[index]) + ' ')
         self.f.write('\n')
 
-        #Глобальная ошибка в точке t = 0.5
-        y_res = ys[int(0.5 / self.h)]
-        y_res_an = T = 2 * self.eps/2000 * np.exp(np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.5) + 2 * self.eps/2000 * np.exp(-np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.5) + self.coef * self.chain_len / (1 + self.coef)
-        global_err = y_res - y_res_an
+        # #Глобальная ошибка в точке t = 0.5
+        # y_res = ys[int(0.5 / self.h)]
+        # y_res_an = T = 2 * self.eps/2000 * np.exp(np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.5) + 2 * self.eps/2000 * np.exp(-np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.5) + self.coef * self.chain_len / (1 + self.coef)
+        # global_err = y_res - y_res_an
 
-        t = np.arange(0, self.time, self.h)
+        t = np.arange(0, self.time + self.h, self.h)
         for index in t:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
 
         for i in t:
             T = 2 * self.eps/2000 * np.exp(np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * i) + 2 * self.eps/2000 * np.exp(-np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * i) + self.coef * self.chain_len / (1 + self.coef)
-            if (T > 1):
-                T = 1
+            if (T > self.chain_len):
+                T = self.chain_len
             self.f.write(str(T) + ' ')
         self.f.write('\n')
 
-        return global_err
+        # return global_err

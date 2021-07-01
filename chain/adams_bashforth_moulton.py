@@ -32,18 +32,21 @@ class ABM:
         y_res = np.append(y_res, y)
 
         for i in range(appr):
+            a1, v1 = mf.myFunc(y, v, self.coef, self.chain_len)
+            v1 += a1 * self.h
+            yp2 = y + v1 * (self.h/2)
+            a2, v2 = mf.myFunc(yp2, v1, self.coef, self.chain_len)
+            v2 += a2 * self.h
+            yp3 = y + v2 * (self.h/2)
+            a3, v3 = mf.myFunc(yp3, v2, self.coef, self.chain_len)
+            v3 += a3 * self.h
+            yp4 = y + v3 * self.h
+            a4, v4 = mf.myFunc(yp4, v3, self.coef, self.chain_len)
+            v4 += a4 * self.h
+            y = y + (self.h/6)*(v1  + 2 * v2  + 2 * v3 + v4 )
 
-            a1, v1 = mf.myFunc(x, y, v, self.coef, self.chain_len, self.h)
-            yp2 = y + (v1 + (a1 * self.h/2) / 2)*(self.h/2)
-            a2, v2 = mf.myFunc(x, yp2, v1, self.coef, self.chain_len, self.h)
-            yp3 = y + (v2 + (a2 * self.h/2) / 2)*(self.h/2)
-            a3, v3 = mf.myFunc(x, yp3, v2, self.coef, self.chain_len, self.h)
-            yp4 = y + (v3 + (a3 * self.h) / 2)*self.h
-            a4, v4 = mf.myFunc(x, yp4, v3, self.coef, self.chain_len, self.h)
-            y = y + (self.h/6)*((v1 + (a1 * self.h/6) / 2) + 2*(v2 + (a2 * self.h/6) / 2) + 2*(v3 + (a3 * self.h/6) / 2) + (v4 + (a4 * self.h/6) / 2))
-
-            if (y > 1):
-                y = 1
+            if (y > self.chain_len):
+                y = self.chain_len
 
             x = x + self.h
 
@@ -75,18 +78,23 @@ class ABM:
         xs = 0
 
         for i in range(3, dx):
-            A1, V1 = mf.myFunc(xs, y[i], V, self.coef, self.chain_len, self.h)
-            A2, V2 = mf.myFunc(xs, y[i - 1], V1, self.coef, self.chain_len, self.h)
-            A3, V3 = mf.myFunc(xs, y[i - 2], V2, self.coef, self.chain_len, self.h)
-            A4, V4 = mf.myFunc(xs, y[i - 3], V3, self.coef, self.chain_len, self.h)
+            A1, V1 = mf.myFunc(y[i], V, self.coef, self.chain_len)
+            V1 += A1 * self.h
+            A2, V2 = mf.myFunc(y[i - 1], V1, self.coef, self.chain_len)
+            V2 += A2 * self.h
+            A3, V3 = mf.myFunc(y[i - 2], V2, self.coef, self.chain_len)
+            V3 += A3 * self.h
+            A4, V4 = mf.myFunc(y[i - 3], V3, self.coef, self.chain_len)
+            V4 += A4 * self.h
 
-            ypredictor = y[i] + (self.h/24)*(55*(V1 + (A1 * self.h/24) / 2) - 59*(V2 + (A2 * self.h/24) / 2) + 37*(V3 + (A3 * self.h/24) / 2) - 9*(V4 + (A4 * self.h/24) / 2))
-            Ap, Vp = mf.myFunc(xs, ypredictor, V, self.coef, self.chain_len, self.h)
+            ypredictor = y[i] + (self.h/24)*(55 * V1 - 59 * V2 + 37 * V3 - 9 * V4 )
+            Ap, Vp = mf.myFunc(ypredictor, V, self.coef, self.chain_len)
+            Vp += Ap * self.h
 
-            yn = y[i] + (self.h/24)*(9*(Vp + (Ap * self.h/24) / 2) + 19*(V1 + (A1 * self.h/24) / 2) - 5*(V2 + (A2 * self.h/24) / 2) + (V3 + (A3 * self.h/24) / 2))
+            yn = y[i] + (self.h/24) * (9 * Vp + 19 * V1 - 5 * V2 + V3)
 
-            if (yn > 1):
-                yn = 1
+            if (yn > self.chain_len):
+                yn = self.chain_len
             # print (yn)
             V = V1
 
@@ -109,21 +117,21 @@ class ABM:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
 
-        #Глобальная ошибка в точке t = 0.5
-        y_res = ys[int(0.5 / self.h)]
-        y_res_an = T = 2 * self.eps/2000 * np.exp(np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.5) + 2 * self.eps/2000 * np.exp(-np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.5) + self.coef * self.chain_len / (1 + self.coef)
-        global_err = y_res - y_res_an
+        # #Глобальная ошибка в точке t = 0.5
+        # y_res = ys[int(0.5 / self.h)]
+        # y_res_an = T = 2 * self.eps/2000 * np.exp(np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.5) + 2 * self.eps/2000 * np.exp(-np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * 0.5) + self.coef * self.chain_len / (1 + self.coef)
+        # global_err = y_res - y_res_an
 
-        t = np.arange(0, self.time, self.h)
+        t = np.arange(0, self.time + self.h, self.h)
         for index in t:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
 
         for i in t:
             T = 2 * self.eps/2000 * np.exp(np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * i) + 2 * self.eps/2000 * np.exp(-np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * i) + self.coef * self.chain_len / (1 + self.coef)
-            if (T > 1):
-                T = 1
+            if (T > self.chain_len):
+                T = self.chain_len
             self.f.write(str(T) + ' ')
         self.f.write('\n')
 
-        return global_err
+        # return global_err
