@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
 import my_func as mf
@@ -12,49 +11,42 @@ class Heun:
         self.eps = _eps
         self.time = time_
         self.f = open('tmp.txt', 'w')
-    
+
     def __del__(self):
         self.f.close()
         pass
 
     def main_H(self):
         appr = int((self.time - 0)/self.h)
-        
-        j = 0
 
         v = 0
+        y0 = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
+        x = np.array([y0, v])
+        res = []
 
-        x = 0
-        y = {}
-        y[j] = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
-        
-        self.f.write(str(x) + ' ')
+        self.f.write(str(0) + ' ')
 
         for i in range(appr):
 
-            a1, v1 = mf.myFunc(y[j], v, self.coef, self.chain_len)
-            v1 += a1 * self.h
-            a2, v2 = mf.myFunc(y[j], v1, self.coef, self.chain_len)
-            v2 += a2 * self.h
+            xdot1 = np.array(mf.myFunc(x, self.coef, self.chain_len))
+            xdot2 = np.array(mf.myFunc(x + xdot1*self.h, self.coef, self.chain_len))
 
-            j += 1
-            y[j] = y[j-1] + (v1 + v2) * self.h / 2
+            x = x + (xdot1 + xdot2) * self.h/2
 
-            v = v1
-            print(y[j])
-            if (y[j] > self.chain_len):
-                y[j] = self.chain_len
-
-            x += self.h
-            self.f.write(str(x) + ' ')
+            if (x[0] > self.chain_len):
+                x[0] = self.chain_len   
+            res = np.append(res, x[0]) 
+            self.f.write(str(i*self.h) + ' ')
         self.f.write('\n')
-        
-        return y
+
+        return res
 
     def execute(self):
         ys = self.main_H()
+
+        self.f.write(str(self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000) + ' ')        
         for index in ys:
-            self.f.write(str(ys[index]) + ' ')
+            self.f.write(str(index) + ' ')
         self.f.write('\n')
 
         # #Глобальная ошибка в точке t = 0.5
@@ -74,4 +66,4 @@ class Heun:
             self.f.write(str(T) + ' ')
         self.f.write('\n')
 
-        # return global_err
+        # return global_err 

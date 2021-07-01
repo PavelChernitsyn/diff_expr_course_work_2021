@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
 import my_func as mf
@@ -18,51 +17,43 @@ class Runge_Kutt:
 
     def RKF45(self):
         appr = int((self.time - 0)/self.h)
-        
-        j = 0
 
         v = 0
-        x = 0
-        y = {}
-        y[j] = self.coef * 1 / (1 + self.coef) + 2 * self.eps/1000
-        
-        self.f.write(str(x) + ' ')
+        y0 = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
+        x = np.array([y0, v])
+        res = []
+
+        self.f.write(str(0) + ' ')
 
         for i in range(appr):
-            a1, v1 = mf.myFunc(y[j], v, self.coef, self.chain_len)
-            v1 += a1 * self.h
-            yp2 = y[j] + v1 * self.h/5
-            a2, v2 = mf.myFunc(yp2, v1, self.coef, self.chain_len)
-            v2 += a2 * self.h
-            yp3 = y[j] + v1 * (3*self.h/40) + v2 * (9*self.h/40)
-            a3, v3 = mf.myFunc(yp3, v2, self.coef, self.chain_len)
-            v3 += a3 * self.h
-            yp4 = y[j] + v1 * (3*self.h/10) - v2 * (9*self.h/10) + v3 * (6*self.h/5)
-            a4, v4 = mf.myFunc(yp4, v3, self.coef, self.chain_len)
-            v4 += a4 * self.h
-            yp5 = y[j] - v1 *(11*self.h/54) + v2 * (5*self.h/2) - v3 * (70*self.h/27) + v4 * (35*self.h/27)
-            a5, v5 = mf.myFunc(yp5, v4, self.coef, self.chain_len)
-            v5 += a5 * self.h
-            yp6 = y[j] + v1 * (1631*self.h/55296) + v2 * (175*self.h/512) + v3 * (575*self.h/13824) + v4 * (44275*self.h/110592) + v5 * (253*self.h/4096)
-            a6, v6 = mf.myFunc(yp6, v5, self.coef, self.chain_len)
-            v6 += a6 * self.h
+            xdot1 = np.array(mf.myFunc(x, self.coef, self.chain_len))
+            xp2 = x + xdot1 * self.h/5
+            xdot2 = np.array(mf.myFunc(xp2, self.coef, self.chain_len))
+            xp3 = x + xdot1 * (3*self.h/40) + xdot2 * (9*self.h/40)
+            xdot3 = np.array(mf.myFunc(xp3, self.coef, self.chain_len))
+            xp4 = x + xdot1 * (3*self.h/10) - xdot2 * (9*self.h/10) + xdot3 * (6*self.h/5)
+            xdot4 = np.array(mf.myFunc(xp4, self.coef, self.chain_len))
+            xp5 = x - xdot1 *(11*self.h/54) + xdot2 * (5*self.h/2) - xdot3 * (70*self.h/27) + xdot4 * (35*self.h/27)
+            xdot5 = np.array(mf.myFunc(xp5, self.coef, self.chain_len))
+            xp6 = x + xdot1 * (1631*self.h/55296) + xdot2 * (175*self.h/512) + xdot3 * (575*self.h/13824) + xdot4 * (44275*self.h/110592) + xdot5 * (253*self.h/4096)
+            xdot6 = np.array(mf.myFunc(xp6, self.coef, self.chain_len))
 
-            j += 1
-            y[j] = y[j-1] + self.h * (37* v1 / 378 + 250 * v3 / 621 + 125 * v4 / 594 + 512 * v6 / 1771)
+            x = x + self.h * (37* xdot1 / 378 + 250 * xdot3 / 621 + 125 * xdot4 / 594 + 512 * xdot6 / 1771)
 
-            v = v1
-            x += self.h
-            if (y[j] > self.chain_len):
-                y[j] = self.chain_len
-            self.f.write(str(x) + ' ')
+            if (x[0] > self.chain_len):
+                x[0] = self.chain_len   
+            res = np.append(res, x[0]) 
+            self.f.write(str(i*self.h) + ' ')
         self.f.write('\n')  
 
-        return y
+        return res
 
     def execute(self):
         ys = self.RKF45()
+
+        self.f.write(str(self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000) + ' ')
         for index in ys:
-            self.f.write(str(ys[index]) + ' ')
+            self.f.write(str(index) + ' ')
         self.f.write('\n')
 
         # #Глобальная ошибка в точке t = 0.5
@@ -82,4 +73,4 @@ class Runge_Kutt:
             self.f.write(str(T) + ' ')
         self.f.write('\n')
 
-        # return global_err
+        # return global_err 

@@ -23,7 +23,7 @@ class Plotter(FigureCanvasTkAgg):
     def draw_lists(self, chain_len, err_msg):
 
         self.axes.clear()
-    
+
         x = [[],[],[],[]]
         i = 0
 
@@ -51,15 +51,16 @@ class Plotter(FigureCanvasTkAgg):
         counter = 0
         mean_err = .0
         for i in range(len(x[1])):
-            if (x[1][i] >= chain_len):
+            if (x[3][i] >= chain_len):
                 break
             err[0].append(i)
-            err[1].append(x[1][i] - x[3][i])
-            mean_err += (x[1][i] - x[3][i])
+            err[1].append(abs(x[3][i] - x[1][i]))
+            # print(err[0])
+            # print(err[1])
+            mean_err += (abs(x[3][i] - x[1][i]))
             counter += 1
         mean_err /= counter
         err_msg.config(text = "Err. = " + str("{0:.8f}".format(mean_err)))
-        
         plt.plot(err[0], err[1], 'r')
         plt.show()
 
@@ -122,17 +123,17 @@ class MainApplication(ttk.Frame):
         self.label_err_msg.config(text = "")
 
         button_BE = ttk.Button(input_frame, text='Backward Euler', command = self.button_BE_clicked)
-                            
+
         button_FE = ttk.Button(input_frame, text='Forward Euler', command = self.button_FE_clicked)
 
         button_RK = ttk.Button(input_frame, text='Runge Kutt', command = self.button_RK_clicked)
-        
+
         button_H = ttk.Button(input_frame, text='Heun', command = self.button_H_clicked)
-        
+
         button_ADM = ttk.Button(input_frame, text='Adams-Bashforth-Moulton', command = self.button_ADM_clicked)
 
         button_discard_param = ttk.Button(input_frame, text='Discard params', command = self.button_discard_param_clicked)
-                            
+
         button_BE.grid(column=0, row=0, columnspan=2, sticky='ew')
         button_FE.grid(column=0, row=1, columnspan=2, sticky='ew')
         button_RK.grid(column=0, row=2, columnspan=2, sticky='ew')
@@ -203,7 +204,7 @@ class MainApplication(ttk.Frame):
         else:
             self.label_err_msg.config(text = "\n\nStatus: DONE!")
             return True
-    
+
     def __del__(self):
         # os.remove('tmp.txt')
-        pass
+        pass 

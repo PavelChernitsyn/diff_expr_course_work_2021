@@ -18,37 +18,31 @@ class BackwardEuler:
     def main_BE(self):
         appr = int((self.time - 0)/self.h)
 
-        j = 0
-
         v = 0
+        y0 = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
+        x = np.array([y0, v])
+        res = []
 
-        x = 0
-        y = {}
-        y[j] = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
-
-        self.f.write(str(x) + ' ')
+        self.f.write(str(0) + ' ')
 
         for i in range(appr):
+            xdot = np.array(mf.myFunc(x, self.coef, self.chain_len))
 
-            a, v = mf.myFunc(y[j], v, self.coef, self.chain_len)
-            
-            x += self.h
-            v += a * self.h
-            y[j+1] = y[j] + v*self.h
+            x = x + xdot * self.h
 
-            j += 1
-            if (y[j] > self.chain_len):
-                y[j] = self.chain_len
-            self.f.write(str(x) + ' ')
+            if (x[0] > self.chain_len):
+                x[0] = self.chain_len   
+            res = np.append(res, x[0])
+            self.f.write(str(i*self.h) + ' ')
         self.f.write('\n')
-
-        return y
+        return res
 
     def execute(self):
         ys = self.main_BE()
-        
+
+        self.f.write(str(self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000) + ' ')
         for index in ys:
-            self.f.write(str(ys[index]) + ' ')
+            self.f.write(str(index) + ' ')
         self.f.write('\n')
 
         # #Глобальная ошибка в точке t = 0.5
@@ -62,7 +56,7 @@ class BackwardEuler:
         for index in t:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
-        
+
         for i in t:
             T = 2 * self.eps/2000 * np.exp(np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * i) + 2 * self.eps/2000 * np.exp(-np.sqrt((1 + self.coef) * 9.8 / self.chain_len) * i) + self.coef * self.chain_len / (1 + self.coef)
             if (T > self.chain_len):
@@ -70,4 +64,4 @@ class BackwardEuler:
             self.f.write(str(T) + ' ')
         self.f.write('\n')
 
-        # return global_err
+        # return global_err 

@@ -1,3 +1,4 @@
+from tkinter.constants import X
 import numpy as np
 import matplotlib.pyplot as plt
 import my_func as mf
@@ -20,43 +21,33 @@ class ABM:
     def RungeKutta4thOrder(self, x):
         appr = int((self.time - 0)/self.h)
 
+        t = 0
         v = 0
-  
-        x = 0
-        y = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
-
-        xsol = np.empty((0))
-        xsol = np.append(xsol, x)
-
-        y_res = np.empty((0))
-        y_res = np.append(y_res, y)
+        y0 = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
+        x = np.array([y0, v])
+        res_v = []
+        res_x = []
+        t_arr = []
 
         for i in range(appr):
-            a1, v1 = mf.myFunc(y, v, self.coef, self.chain_len)
-            v1 += a1 * self.h
-            yp2 = y + v1 * (self.h/2)
-            a2, v2 = mf.myFunc(yp2, v1, self.coef, self.chain_len)
-            v2 += a2 * self.h
-            yp3 = y + v2 * (self.h/2)
-            a3, v3 = mf.myFunc(yp3, v2, self.coef, self.chain_len)
-            v3 += a3 * self.h
-            yp4 = y + v3 * self.h
-            a4, v4 = mf.myFunc(yp4, v3, self.coef, self.chain_len)
-            v4 += a4 * self.h
-            y = y + (self.h/6)*(v1  + 2 * v2  + 2 * v3 + v4 )
+            xdot1 = np.array(mf.myFunc(x, self.coef, self.chain_len))
+            xp2 = x + xdot1 * (self.h/2)
+            xdot2 = np.array(mf.myFunc(xp2, self.coef, self.chain_len))
+            xp3 = x + xdot2 * (self.h/2)
+            xdot3 = np.array(mf.myFunc(xp3, self.coef, self.chain_len))
+            xp4 = x + xdot3 * self.h
+            xdot4 = np.array(mf.myFunc(xp4, self.coef, self.chain_len))
+            x = x + (self.h/6)*(xdot1  + 2 * xdot2  + 2 * xdot3 + xdot4)
 
-            if (y > self.chain_len):
-                y = self.chain_len
+            if (x[0] > self.chain_len):
+                x[0] = self.chain_len
 
-            x = x + self.h
+            t = t + self.h
 
-            v = v1
-
-            xsol = np.append(xsol, x)
-
-            y_res = np.append(y_res, y) 
-
-        return [xsol, y_res]
+            t_arr = np.append(t_arr, t)
+            res_x = np.append(res_x, x[0])
+            res_v = np.append(res_v, x[1])
+        return [t_arr, res_x, res_v]
 
 
     def ABM4thOrder(self):
@@ -64,55 +55,51 @@ class ABM:
 
         xrk = [self.x[0] + k * self.h for k in range(dx + 1)]
 
-        [xx, yy] = self.RungeKutta4thOrder((xrk[0], xrk[3]))
+        [t_arr, res_x, res_v] = self.RungeKutta4thOrder((xrk[0], xrk[3]))
+        t_temp = t_arr
+        t_arr = np.empty(0)
+        x = np.array([[res_x[0], res_v[0]]])
 
-        self.x = xx
-        xsol = np.empty(0)
+        for i in range(1, len(res_x)):
+            x = np.append(x, [[res_x[i], res_v[i]]], axis=0)
 
-        y = yy
-        yn = yy[0]
-        y_res = np.empty(0)
+        xn = res_x[0]
+        res = []
 
-
-        V = 0
-        xs = 0
+        t = 0
 
         for i in range(3, dx):
-            A1, V1 = mf.myFunc(y[i], V, self.coef, self.chain_len)
-            V1 += A1 * self.h
-            A2, V2 = mf.myFunc(y[i - 1], V1, self.coef, self.chain_len)
-            V2 += A2 * self.h
-            A3, V3 = mf.myFunc(y[i - 2], V2, self.coef, self.chain_len)
-            V3 += A3 * self.h
-            A4, V4 = mf.myFunc(y[i - 3], V3, self.coef, self.chain_len)
-            V4 += A4 * self.h
+            xdot1 = np.array(mf.myFunc(x[i], self.coef, self.chain_len))
+            xdot2 = np.array(mf.myFunc(x[i - 1], self.coef, self.chain_len))
+            xdot3 = np.array(mf.myFunc(x[i - 2], self.coef, self.chain_len))
+            xdot4 = np.array(mf.myFunc(x[i - 3], self.coef, self.chain_len))
 
-            ypredictor = y[i] + (self.h/24)*(55 * V1 - 59 * V2 + 37 * V3 - 9 * V4 )
-            Ap, Vp = mf.myFunc(ypredictor, V, self.coef, self.chain_len)
-            Vp += Ap * self.h
+            xp = x[i] + (self.h/24)*(55 * xdot1 - 59 * xdot2 + 37 * xdot3 - 9 * xdot4 )
+            xdotp = np.array(mf.myFunc(xp, self.coef, self.chain_len))
 
-            yn = y[i] + (self.h/24) * (9 * Vp + 19 * V1 - 5 * V2 + V3)
+            xn = x[i] + (self.h/24) * (9 * xdotp + 19 * xdot1 - 5 * xdot2 + xdot3)
 
-            if (yn > self.chain_len):
-                yn = self.chain_len
+            if (xn[0] > self.chain_len):
+                xn[0] = self.chain_len
             # print (yn)
-            V = V1
 
-            xs = xx[i] + self.h
-            xsol = np.append(xsol, xs)
+            t = t_temp[i] + self.h
+            t_arr = np.append(t_arr, t)
 
-            self.x = xsol
+            self.x = t_arr
 
-            y_res = np.append(y_res, yn)
-        return [xsol, y_res]
+            res = np.append(res, xn[0])
+        return [t_arr, res]
 
     def execute(self):
         [ts, ys] = self.ABM4thOrder()
 
+        self.f.write(str(0) + ' ')
         for index in ts:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
-        
+
+        self.f.write(str(self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000) + ' ')        
         for index in ys:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
