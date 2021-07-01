@@ -51,7 +51,8 @@ class Plotter(FigureCanvasTkAgg):
         counter = 0
         mean_err = .0
         for i in range(len(x[1])):
-            if (x[3][i] >= chain_len):
+            # print(len(x[1]))
+            if (x[3][i] >= chain_len or x[1][i] >= chain_len):
                 break
             err[0].append(i)
             err[1].append(abs(x[3][i] - x[1][i]))
@@ -61,6 +62,8 @@ class Plotter(FigureCanvasTkAgg):
             counter += 1
         mean_err /= counter
         err_msg.config(text = "Err. = " + str("{0:.8f}".format(mean_err)))
+        print(err[0])
+        print(err[1])
         plt.plot(err[0], err[1], 'r')
         plt.show()
 
@@ -168,7 +171,7 @@ class MainApplication(ttk.Frame):
 
     def button_RK_clicked(self):
         err = runge_kutta.Runge_Kutt(
-            0.0001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            0.0001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
         self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)
@@ -176,7 +179,7 @@ class MainApplication(ttk.Frame):
 
     def button_H_clicked(self):
         err = heun.Heun(
-            0.0001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            0.0001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
         self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)
@@ -184,7 +187,7 @@ class MainApplication(ttk.Frame):
 
     def button_ADM_clicked(self):
         err = adams_bashforth_moulton.ABM(
-            0.0001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
+            0.0001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
         self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)

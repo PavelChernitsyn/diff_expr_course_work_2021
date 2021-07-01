@@ -1,3 +1,4 @@
+from os import TMP_MAX
 from tkinter.constants import X
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,35 +20,29 @@ class ABM:
         pass
 
     def RungeKutta4thOrder(self, x):
-        appr = int((self.time - 0)/self.h)
+        appr = int((x[-1] - x[0])/self.h)
 
-        t = 0
         v = 0
         y0 = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
-        x = np.array([y0, v])
+        X = np.array([y0, v])
         res_v = []
         res_x = []
-        t_arr = []
+        res_x = np.append(res_x, X[0])
+        res_v = np.append(res_v, X[1])
 
         for i in range(appr):
-            xdot1 = np.array(mf.myFunc(x, self.coef, self.chain_len))
-            xp2 = x + xdot1 * (self.h/2)
+            xdot1 = np.array(mf.myFunc(X, self.coef, self.chain_len))
+            xp2 = X + xdot1 * (self.h/2)
             xdot2 = np.array(mf.myFunc(xp2, self.coef, self.chain_len))
-            xp3 = x + xdot2 * (self.h/2)
+            xp3 = X + xdot2 * (self.h/2)
             xdot3 = np.array(mf.myFunc(xp3, self.coef, self.chain_len))
-            xp4 = x + xdot3 * self.h
+            xp4 = X + xdot3 * self.h
             xdot4 = np.array(mf.myFunc(xp4, self.coef, self.chain_len))
-            x = x + (self.h/6)*(xdot1  + 2 * xdot2  + 2 * xdot3 + xdot4)
+            X = X + (self.h/6)*(xdot1  + 2 * xdot2  + 2 * xdot3 + xdot4)
 
-            if (x[0] > self.chain_len):
-                x[0] = self.chain_len
-
-            t = t + self.h
-
-            t_arr = np.append(t_arr, t)
-            res_x = np.append(res_x, x[0])
-            res_v = np.append(res_v, x[1])
-        return [t_arr, res_x, res_v]
+            res_x = np.append(res_x, X[0])
+            res_v = np.append(res_v, X[1])
+        return [res_x, res_v]
 
 
     def ABM4thOrder(self):
@@ -55,24 +50,27 @@ class ABM:
 
         xrk = [self.x[0] + k * self.h for k in range(dx + 1)]
 
-        [t_arr, res_x, res_v] = self.RungeKutta4thOrder((xrk[0], xrk[3]))
-        t_temp = t_arr
+        [res_x, res_v] = self.RungeKutta4thOrder((xrk[0], xrk[3]))
+
         t_arr = np.empty(0)
+
         x = np.array([[res_x[0], res_v[0]]])
+        tmp_x = np.array([[0], [0]])
 
         for i in range(1, len(res_x)):
             x = np.append(x, [[res_x[i], res_v[i]]], axis=0)
-
-        xn = res_x[0]
+        xn = np.array([res_x[0], res_v[0]])
+        print(x)
         res = []
 
-        t = 0
+        t = self.h * 4
 
         for i in range(3, dx):
+            
             xdot1 = np.array(mf.myFunc(x[i], self.coef, self.chain_len))
-            xdot2 = np.array(mf.myFunc(x[i - 1], self.coef, self.chain_len))
-            xdot3 = np.array(mf.myFunc(x[i - 2], self.coef, self.chain_len))
-            xdot4 = np.array(mf.myFunc(x[i - 3], self.coef, self.chain_len))
+            xdot2 = np.array(mf.myFunc(x[i-1], self.coef, self.chain_len))
+            xdot3 = np.array(mf.myFunc(x[i-2], self.coef, self.chain_len))
+            xdot4 = np.array(mf.myFunc(x[i-3], self.coef, self.chain_len))
 
             xp = x[i] + (self.h/24)*(55 * xdot1 - 59 * xdot2 + 37 * xdot3 - 9 * xdot4 )
             xdotp = np.array(mf.myFunc(xp, self.coef, self.chain_len))
@@ -81,14 +79,15 @@ class ABM:
 
             if (xn[0] > self.chain_len):
                 xn[0] = self.chain_len
-            # print (yn)
 
-            t = t_temp[i] + self.h
+            t += self.h
             t_arr = np.append(t_arr, t)
 
-            self.x = t_arr
-
             res = np.append(res, xn[0])
+            tmp_x = np.empty(0)
+            tmp_x = np.append(tmp_x, xn)
+            
+            x = np.append(x, [tmp_x], axis = 0)
         return [t_arr, res]
 
     def execute(self):
