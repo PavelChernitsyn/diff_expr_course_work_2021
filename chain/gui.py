@@ -51,17 +51,22 @@ class Plotter(FigureCanvasTkAgg):
         counter = 0
         mean_err = .0
         max_diff = 0
-        for i in range(len(x[1])):
-            if (x[1][i] >= chain_len or x[3][i] >= 1):
+        acc = 0.000001
+        for i in range(len(x[3])):
+            if (x[1][i] >= chain_len or x[3][i] >= chain_len):
                 break
             err[0].append(i)
             diff = abs(x[3][i] - x[1][i])
             err[1].append(diff)
             mean_err += (diff)
             counter += 1
+            if (diff <= acc and i != 0):
+                print(counter)
+                acc *= 0.000001
             if (max_diff < diff):
                 max_diff = diff
         mean_err /= counter
+        print(max_diff)
         err_msg.config(text = "Err. = " + str("{0:.8f}".format(mean_err)))
         max_err_msg.config(text = " Max Err. = " + str("{0:.8f}".format(max_diff)))
 

@@ -60,10 +60,15 @@ class ABM:
             x = np.append(x, [[res_x[i], res_v[i]]], axis=0)
         xn = np.array([res_x[0], res_v[0]])
         print(x)
-        
+
         res = []
+        res = np.append(res, res_x)
 
         t = self.h * 4
+        t_arr = np.append(t_arr, 0)
+        t_arr = np.append(t_arr, self.h * 1)
+        t_arr = np.append(t_arr, self.h * 2)
+        t_arr = np.append(t_arr, self.h * 3)
 
         for i in range(3, dx):
             
