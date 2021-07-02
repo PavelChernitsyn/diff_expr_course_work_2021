@@ -20,10 +20,10 @@ class Plotter(FigureCanvasTkAgg):
         self.axes = self.figure.add_subplot(111)
         self.get_tk_widget().grid(column=0, row=0, sticky='nsew')
 
-    def draw_lists(self, chain_len, err_msg):
+    def draw_lists(self, chain_len, err_msg, max_err_msg):
 
         self.axes.clear()
-
+    
         x = [[],[],[],[]]
         i = 0
 
@@ -50,20 +50,21 @@ class Plotter(FigureCanvasTkAgg):
         err = [[], []]
         counter = 0
         mean_err = .0
+        max_diff = 0
         for i in range(len(x[1])):
-            # print(len(x[1]))
-            if (x[3][i] >= chain_len or x[1][i] >= chain_len):
+            if (x[1][i] >= chain_len or x[3][i] >= 1):
                 break
             err[0].append(i)
-            err[1].append(abs(x[3][i] - x[1][i]))
-            # print(err[0])
-            # print(err[1])
-            mean_err += (abs(x[3][i] - x[1][i]))
+            diff = abs(x[3][i] - x[1][i])
+            err[1].append(diff)
+            mean_err += (diff)
             counter += 1
+            if (max_diff < diff):
+                max_diff = diff
         mean_err /= counter
         err_msg.config(text = "Err. = " + str("{0:.8f}".format(mean_err)))
-        print(err[0])
-        print(err[1])
+        max_err_msg.config(text = " Max Err. = " + str("{0:.8f}".format(max_diff)))
+
         plt.plot(err[0], err[1], 'r')
         plt.show()
 
@@ -124,19 +125,21 @@ class MainApplication(ttk.Frame):
 
         self.label_err_msg = ttk.Label(input_frame)
         self.label_err_msg.config(text = "")
+        self.label_max_err_msg = ttk.Label(input_frame)
+        self.label_max_err_msg.config(text = "")
 
         button_BE = ttk.Button(input_frame, text='Backward Euler', command = self.button_BE_clicked)
-
+                            
         button_FE = ttk.Button(input_frame, text='Forward Euler', command = self.button_FE_clicked)
 
         button_RK = ttk.Button(input_frame, text='Runge Kutt', command = self.button_RK_clicked)
-
+        
         button_H = ttk.Button(input_frame, text='Heun', command = self.button_H_clicked)
-
+        
         button_ADM = ttk.Button(input_frame, text='Adams-Bashforth-Moulton', command = self.button_ADM_clicked)
 
         button_discard_param = ttk.Button(input_frame, text='Discard params', command = self.button_discard_param_clicked)
-
+                            
         button_BE.grid(column=0, row=0, columnspan=2, sticky='ew')
         button_FE.grid(column=0, row=1, columnspan=2, sticky='ew')
         button_RK.grid(column=0, row=2, columnspan=2, sticky='ew')
@@ -152,13 +155,14 @@ class MainApplication(ttk.Frame):
         self.slider_time.grid(column=0, row=12, columnspan=2, sticky='ew')
         button_discard_param.grid(column=0, row=13, columnspan=2, sticky='ew')
         self.label_err_msg.grid(column=0, row=14, columnspan=2, sticky='ew')
+        self.label_max_err_msg.grid(column=0, row=15, columnspan=2, sticky='ew')
 
     def button_BE_clicked(self):
         err = backward_euler.BackwardEuler(
             0.0001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute() 
-        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)
+        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg, self.label_max_err_msg)
         # self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_FE_clicked(self):
@@ -166,31 +170,31 @@ class MainApplication(ttk.Frame):
             0.0001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
-        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)
+        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg, self.label_max_err_msg)
         # self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_RK_clicked(self):
         err = runge_kutta.Runge_Kutt(
-            0.0001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
+            0.0001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
-        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)
+        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg, self.label_max_err_msg)
         # self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_H_clicked(self):
         err = heun.Heun(
-            0.0001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
+            0.0001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
-        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)
+        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg, self.label_max_err_msg)
         # self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_ADM_clicked(self):
         err = adams_bashforth_moulton.ABM(
-            0.0001, self.slider_coef.get(), self.slider_chain_lenght.get(), 
+            0.0001, int(self.slider_coef.get()), self.slider_chain_lenght.get(), 
             self.slider_epsilon.get(), self.slider_time.get()
             ).execute()
-        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg)
+        self.plot.draw_lists(self.slider_chain_lenght.get(), self.label_err_msg, self.label_max_err_msg)
         # self.label_err_msg.config(text = "Err. = " + str("{0:.8f}".format(err)))
 
     def button_discard_param_clicked(self):
@@ -207,7 +211,7 @@ class MainApplication(ttk.Frame):
         else:
             self.label_err_msg.config(text = "\n\nStatus: DONE!")
             return True
-
+    
     def __del__(self):
         # os.remove('tmp.txt')
-        pass 
+        pass

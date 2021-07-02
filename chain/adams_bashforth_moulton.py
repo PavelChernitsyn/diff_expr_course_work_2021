@@ -55,12 +55,12 @@ class ABM:
         t_arr = np.empty(0)
 
         x = np.array([[res_x[0], res_v[0]]])
-        tmp_x = np.array([[0], [0]])
 
         for i in range(1, len(res_x)):
             x = np.append(x, [[res_x[i], res_v[i]]], axis=0)
         xn = np.array([res_x[0], res_v[0]])
         print(x)
+        
         res = []
 
         t = self.h * 4
@@ -84,10 +84,8 @@ class ABM:
             t_arr = np.append(t_arr, t)
 
             res = np.append(res, xn[0])
-            tmp_x = np.empty(0)
-            tmp_x = np.append(tmp_x, xn)
-            
-            x = np.append(x, [tmp_x], axis = 0)
+            x = np.append(x, [xn], axis = 0)
+
         return [t_arr, res]
 
     def execute(self):
