@@ -22,14 +22,23 @@ class BackwardEuler:
         y0 = self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000
         x = np.array([y0, v])
         res = []
-        
+        lamb0 = np.array(mf.myFunc(x, self.coef, self.chain_len))
+
         self.f.write(str(0) + ' ')
-
+        
         for i in range(appr):
-            xdot = np.array(mf.myFunc(x, self.coef, self.chain_len))
-            xdot = np.array(mf.myFunc(x + xdot * self.h, self.coef, self.chain_len))
-
-            x = x + xdot * self.h
+            X = np.empty(0)
+            X = np.array([x])
+            j = 0
+            dot0 = np.array(mf.myFunc(x, self.coef, self.chain_len))
+            X = np.append(X, [x + dot0 *self.h], axis=0)
+            j += 1
+            while(abs(X[j][0] - X[j-1][0]) > 1e-12):
+                xdot = np.array(mf.myFunc(X[j], self.coef, self.chain_len))
+                j += 1
+                X = np.append(X, [x + xdot* self.h], axis=0)  
+ 
+            x = X[j]
 
             if (x[0] > self.chain_len):
                 x[0] = self.chain_len   
