@@ -58,13 +58,13 @@ class ABM:
 
         for i in range(1, len(res_x)):
             x = np.append(x, [[res_x[i], res_v[i]]], axis=0)
-        xn = np.array([res_x[0], res_v[0]])
+        # xn = np.array([res_x[0], res_v[0]])
         print(x)
 
         res = []
         res = np.append(res, res_x)
 
-        t = self.h * 4
+        t = self.h * 3
         t_arr = np.append(t_arr, 0)
         t_arr = np.append(t_arr, self.h * 1)
         t_arr = np.append(t_arr, self.h * 2)
@@ -89,6 +89,7 @@ class ABM:
             t_arr = np.append(t_arr, t)
 
             res = np.append(res, xn[0])
+            
             x = np.append(x, [xn], axis = 0)
 
         return [t_arr, res]
@@ -96,12 +97,10 @@ class ABM:
     def execute(self):
         [ts, ys] = self.ABM4thOrder()
 
-        self.f.write(str(0) + ' ')
         for index in ts:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
 
-        self.f.write(str(self.coef * self.chain_len / (1 + self.coef) + 2 * self.eps/1000) + ' ')        
         for index in ys:
             self.f.write(str(index) + ' ')
         self.f.write('\n')
